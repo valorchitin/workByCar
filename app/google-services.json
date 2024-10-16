@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "309415171823",
+    "project_id": "workbycar-3ed50",
+    "storage_bucket": "workbycar-3ed50.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:309415171823:android:331f9482c1ed12e9efed1a",
+        "android_client_info": {
+          "package_name": "com.example.workbycar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASSe3b5TH8GwqFtMn2GHpAqrZd2EJD_NU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
