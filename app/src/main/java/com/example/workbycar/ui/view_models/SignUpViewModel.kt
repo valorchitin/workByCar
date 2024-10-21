@@ -16,10 +16,12 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel(){
     var email by mutableStateOf("")
     var password by mutableStateOf("")
+    var name by mutableStateOf("")
+    var surname by mutableStateOf("")
 
     fun signUp(authResult: (Boolean) -> Unit){
         viewModelScope.launch {
-            authRepository.createUserWithEmailAndPassword(email, password, CallBackHandle(
+            authRepository.createUserWithEmailAndPassword(email, password, name, surname, CallBackHandle(
                 onSuccess = { authResult.invoke(it) },
                 onError = {
                     authResult(false)

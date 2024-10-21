@@ -13,6 +13,7 @@ import com.example.workbycar.ui.navigation.AppNavigation
 import com.example.workbycar.ui.theme.WorkByCarTheme
 import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,12 +22,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val loginViewModel: LoginViewModel by viewModels()
         val signUpViewModel: SignUpViewModel by viewModels()
+        val profileViewModel: ProfileViewModel by viewModels()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             WorkByCarTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(loginViewModel, signUpViewModel)
+                    AppNavigation(loginViewModel, signUpViewModel, profileViewModel)
                 }
             }
         }

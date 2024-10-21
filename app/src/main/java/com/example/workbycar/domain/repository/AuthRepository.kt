@@ -2,6 +2,7 @@ package com.example.workbycar.domain.repository
 
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.utils.CallBackHandle
+import java.time.Year
 
 interface AuthRepository {
     fun getCurrentUser(callBack: CallBackHandle<UserLogged>)
@@ -10,5 +11,5 @@ interface AuthRepository {
 
     fun logout(callBack: CallBackHandle<Boolean>)
 
-    suspend fun createUserWithEmailAndPassword(email: String, password: String, callBack: CallBackHandle<Boolean>)
+    suspend fun createUserWithEmailAndPassword(email: String, password: String, name: String, surname: String, callBack: CallBackHandle<Boolean>)
 }
