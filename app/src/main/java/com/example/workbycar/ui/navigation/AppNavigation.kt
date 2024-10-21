@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import com.example.workbycar.ui.views.LogInScreen
 import com.example.workbycar.ui.views.MainScreen
 import com.example.workbycar.ui.views.SignUpScreen
@@ -16,7 +17,7 @@ import com.example.workbycar.ui.views.profile.ProfileScreen
 import com.example.workbycar.ui.views.trips.TripsScreen
 
 @Composable
-fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewModel) {
+fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewModel, profileViewModel: ProfileViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -39,7 +40,7 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
             TripsScreen(navController)
         }
         composable(AppScreens.ProfileScreen.route) {
-            ProfileScreen(navController)
+            ProfileScreen(navController, profileViewModel)
         }
         composable(AppScreens.StartTripScreen.route) {
             StartTripScreen(navController)

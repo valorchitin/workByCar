@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.material3)
+    implementation(libs.firebase.firestore.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

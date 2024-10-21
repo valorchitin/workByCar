@@ -36,6 +36,12 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel)
         item{
             PasswordTextView(signUpViewModel)
         }
+        item {
+            NameTextView(signUpViewModel)
+        }
+        item {
+            SurnameTextView(signUpViewModel)
+        }
         item{
             ButtonSignUp(navController, signUpViewModel, context)
         }
@@ -49,6 +55,28 @@ fun EmailTextView(signUpViewModel: SignUpViewModel){
         onValueChange = { signUpViewModel.email = it },
         label = { Text("Add a valid Email") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun NameTextView(signUpViewModel: SignUpViewModel){
+    TextField(
+        value = signUpViewModel.name,
+        onValueChange = { signUpViewModel.name = it },
+        label = { Text("Name") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun SurnameTextView(signUpViewModel: SignUpViewModel){
+    TextField(
+        value = signUpViewModel.surname,
+        onValueChange = { signUpViewModel.surname = it },
+        label = { Text("Surname") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -83,3 +111,4 @@ fun ButtonSignUp(navController: NavController, signUpViewModel: SignUpViewModel,
         Text(text = "Sign up")
     }
 }
+
