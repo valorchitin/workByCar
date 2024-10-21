@@ -1,16 +1,12 @@
 package com.example.workbycar.ui.views
 
 import android.content.Context
-import android.widget.Button
-import android.widget.Space
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,24 +18,27 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
-import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
 
 @Composable
 fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel){
     val context = LocalContext.current
 
-    Column (modifier = Modifier
+    LazyColumn (modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        EmailTextView(signUpViewModel)
-        Spacer(modifier = Modifier.height(8.dp))
-        PasswordTextView(signUpViewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        ButtonSignUp(navController, signUpViewModel, context)
+        item{
+            EmailTextView(signUpViewModel)
+        }
+        item{
+            PasswordTextView(signUpViewModel)
+        }
+        item{
+            ButtonSignUp(navController, signUpViewModel, context)
+        }
     }
 }
 
