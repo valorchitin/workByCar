@@ -12,11 +12,18 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import com.example.workbycar.ui.views.ButtonsMainScreen
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel){
     val user = profileViewModel.currentUser
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val formattedBirthDate = user.birthDate?.let {
+        dateFormat.format(Date(it))
+    } ?: "Fecha no válida"
     Column (
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -24,6 +31,8 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
     ) {
         Text("Name: ${user.name}")
         Text("Surname: ${user.surname}")
+        Text("Birthdate: $formattedBirthDate")
+        Text("Phone: ${user.phone}")
         Text("Profile Screen")
         ButtonsMainScreen(navController = navController)
     }

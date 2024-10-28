@@ -1,4 +1,4 @@
-package com.example.workbycar.ui.views
+package com.example.workbycar.ui.views.sign_up
 
 import android.content.Context
 import android.widget.Toast
@@ -7,11 +7,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -19,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel){
@@ -31,16 +40,19 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel)
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item{
-            EmailTextView(signUpViewModel)
+            EmailTextViewForSignUp(signUpViewModel)
         }
         item{
-            PasswordTextView(signUpViewModel)
+            PasswordTextViewForSignUp(signUpViewModel)
         }
         item {
             NameTextView(signUpViewModel)
         }
         item {
             SurnameTextView(signUpViewModel)
+        }
+        item {
+            BirthDateButton(signUpViewModel)
         }
         item{
             ButtonSignUp(navController, signUpViewModel, context)
@@ -49,7 +61,7 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel)
 }
 
 @Composable
-fun EmailTextView(signUpViewModel: SignUpViewModel){
+fun EmailTextViewForSignUp(signUpViewModel: SignUpViewModel){
     TextField(
         value = signUpViewModel.email,
         onValueChange = { signUpViewModel.email = it },
@@ -82,7 +94,7 @@ fun SurnameTextView(signUpViewModel: SignUpViewModel){
 }
 
 @Composable
-fun PasswordTextView(signUpViewModel: SignUpViewModel){
+fun PasswordTextViewForSignUp(signUpViewModel: SignUpViewModel){
     TextField(
         value = signUpViewModel.password,
         onValueChange = {signUpViewModel.password = it},
@@ -94,17 +106,85 @@ fun PasswordTextView(signUpViewModel: SignUpViewModel){
 }
 
 @Composable
+fun BirthDateButton(signUpViewModel: SignUpViewModel){
+    var showDatePicker by remember{ mutableStateOf(false) }
+
+    var selectedDate by remember{ mutableStateOf<Long?>(null) }
+
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+    val formattedDate = selectedDate?.let { dateFormat.format(Date(it)) } ?: "Selecciona tu fecha de nacimiento"
+
+
+    Button(
+        onClick = { showDatePicker = true},
+        shape = CutCornerShape(0),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.LightGray,
+            contentColor = Color.Black
+        ),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text( text = formattedDate)
+    }
+
+    if (showDatePicker) {
+        DatePickerModal(
+            onDateSelected = { date ->
+                signUpViewModel.birthDate = date
+                selectedDate = date
+                showDatePicker = false
+            },
+            onDismiss = {
+                showDatePicker = false
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    onDateSelected: (Long?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis)
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@Composable
 fun ButtonSignUp(navController: NavController, signUpViewModel: SignUpViewModel, context: Context) {
     Button(
         onClick = {
-            signUpViewModel.signUp { success ->
-                if (success) {
-                    navController.navigate(AppScreens.MainScreen.route) {
-                        popUpTo(AppScreens.LogInScreen.route) { inclusive = true }
+            if (signUpViewModel.signUpScreenInputValid()){
+                signUpViewModel.signUp { success ->
+                    if (success) {
+                        navController.navigate(AppScreens.AddPhoneScreen.route) {
+                            popUpTo(AppScreens.LogInScreen.route) { inclusive = true }
+                        }
+                    } else {
+                        Toast.makeText(context, "Error on Sign In", Toast.LENGTH_LONG).show()
                     }
-                } else {
-                    Toast.makeText(context, "Error on Sign In", Toast.LENGTH_LONG).show()
                 }
+            } else {
+                Toast.makeText(context, "Empty requested values", Toast.LENGTH_LONG).show()
             }
         }
     ) {
