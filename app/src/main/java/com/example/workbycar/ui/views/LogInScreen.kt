@@ -31,9 +31,9 @@ fun LogInScreen(navController: NavController, loginViewModel: LoginViewModel){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        EmailTextView(loginViewModel)
+        EmailTextViewForLogIn(loginViewModel)
         Spacer(modifier = Modifier.height(8.dp))
-        PasswordTextView(loginViewModel)
+        PasswordTextViewForLogIn(loginViewModel)
         Spacer(modifier = Modifier.height(16.dp))
         ButtonLogIn(navController, loginViewModel, context)
         Spacer(modifier = Modifier.height(30.dp))
@@ -43,7 +43,7 @@ fun LogInScreen(navController: NavController, loginViewModel: LoginViewModel){
 }
 
 @Composable
-fun EmailTextView(loginViewModel: LoginViewModel){
+fun EmailTextViewForLogIn(loginViewModel: LoginViewModel){
     TextField(
         value = loginViewModel.email,
         onValueChange = { loginViewModel.email = it },
@@ -54,7 +54,7 @@ fun EmailTextView(loginViewModel: LoginViewModel){
 }
 
 @Composable
-fun PasswordTextView(loginViewModel: LoginViewModel){
+fun PasswordTextViewForLogIn(loginViewModel: LoginViewModel){
     TextField(
         value = loginViewModel.password,
         onValueChange = {loginViewModel.password = it},

@@ -13,13 +13,12 @@ import com.example.workbycar.domain.repository.AuthRepository
 import com.example.workbycar.utils.CallBackHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel(){
-    var currentUser by mutableStateOf(UserLogged("", "", "", "", LocalDate.now()))
+    var currentUser by mutableStateOf(UserLogged("", "", "", "", null, ""))
 
     init {
         userInfo()

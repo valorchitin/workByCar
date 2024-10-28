@@ -5,7 +5,6 @@ import com.example.workbycar.domain.repository.AuthRepository
 import com.example.workbycar.utils.CallBackHandle
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.time.Year
 import javax.inject.Inject
 
 class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAuth) : AuthRepository {
@@ -19,12 +18,16 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                 .addOnSuccessListener { user ->
                     val name = user.getString("name") ?: ""
                     val surname = user.getString("surname") ?: ""
+                    val birthDate = user.getLong("birthDate")
+                    val phone = user.getString("phone") ?: ""
 
                     val userLogged = UserLogged(
                         uid = currentUser.uid,
                         email = currentUser.email.toString(),
                         name = name,
                         surname = surname,
+                        birthDate = birthDate,
+                        phone = phone,
                     )
                     callBack.onSuccess.invoke(userLogged)
                 }
@@ -61,6 +64,8 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
         password: String,
         name: String,
         surname: String,
+        birthDate: Long?,
+        phone: String,
         callBack: CallBackHandle<Boolean>
     ) {
         try {
@@ -70,7 +75,9 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                     if(user_id != null){
                         val user = hashMapOf(
                             "name" to name,
-                            "surname" to surname
+                            "surname" to surname,
+                            "birthDate" to birthDate,
+                            "phone" to phone
                         )
 
                         FirebaseFirestore.getInstance()
