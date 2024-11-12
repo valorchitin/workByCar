@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,29 +34,39 @@ import java.util.Locale
 fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel){
     val context = LocalContext.current
 
+    var isSignUpSucces by remember { mutableStateOf(false) }
+
     LazyColumn (modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item{
-            EmailTextViewForSignUp(signUpViewModel)
-        }
-        item{
-            PasswordTextViewForSignUp(signUpViewModel)
-        }
-        item {
-            NameTextView(signUpViewModel)
-        }
-        item {
-            SurnameTextView(signUpViewModel)
-        }
-        item {
-            BirthDateButton(signUpViewModel)
-        }
-        item{
-            ButtonSignUp(navController, signUpViewModel, context)
+        if (!isSignUpSucces) {
+            item {
+                EmailTextViewForSignUp(signUpViewModel)
+            }
+            item {
+                PasswordTextViewForSignUp(signUpViewModel)
+            }
+            item {
+                NameTextView(signUpViewModel)
+            }
+            item {
+                SurnameTextView(signUpViewModel)
+            }
+            item {
+                BirthDateButton(signUpViewModel)
+            }
+            item {
+                ButtonSignUp(signUpViewModel, context){ signUpSuccesful ->
+                    isSignUpSucces = signUpSuccesful
+                }
+            }
+        } else {
+            item {
+                ContinueButton(navController, context)
+            }
         }
     }
 }
@@ -170,15 +181,13 @@ fun DatePickerModal(
 }
 
 @Composable
-fun ButtonSignUp(navController: NavController, signUpViewModel: SignUpViewModel, context: Context) {
+fun ButtonSignUp(signUpViewModel: SignUpViewModel, context: Context, onSignUpSucces: (Boolean) -> Unit) {
     Button(
         onClick = {
             if (signUpViewModel.signUpScreenInputValid()){
                 signUpViewModel.signUp { success ->
                     if (success) {
-                        navController.navigate(AppScreens.AddPhoneScreen.route) {
-                            popUpTo(AppScreens.LogInScreen.route) { inclusive = true }
-                        }
+                        onSignUpSucces(true)
                     } else {
                         Toast.makeText(context, "Error on Sign In", Toast.LENGTH_LONG).show()
                     }
@@ -189,6 +198,28 @@ fun ButtonSignUp(navController: NavController, signUpViewModel: SignUpViewModel,
         }
     ) {
         Text(text = "Sign up")
+    }
+}
+
+@Composable
+fun ContinueButton(navController: NavController, context: Context){
+    Button(
+        onClick ={
+            val user = FirebaseAuth.getInstance().currentUser
+            user?.reload()?.addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    if (user.isEmailVerified){
+                        navController.navigate(AppScreens.AddPhoneScreen.route)
+                    } else {
+                        Toast.makeText(context,"Verify your email",  Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(context, "Error reloading user data", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    ) {
+        Text(text = "Continue")
     }
 }
 
