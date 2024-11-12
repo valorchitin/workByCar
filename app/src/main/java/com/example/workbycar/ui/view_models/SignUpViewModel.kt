@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
 import com.example.workbycar.utils.CallBackHandle
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel(){
+    private var auth: FirebaseAuth = FirebaseAuth.getInstance()
     var email by mutableStateOf("")
     var password by mutableStateOf("")
     var name by mutableStateOf("")
@@ -34,12 +36,27 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
                 birthDate,
                 "",
                 CallBackHandle(
-                    onSuccess = { authResult.invoke(it) },
+                    onSuccess = {
+                        authResult.invoke(it)
+                        sendVerificationEmail()
+                    },
                     onError = {
                         authResult(false)
                         Log.e("SignUpViewModel", "Error al crear usuario: $it")
                     }
                 ))
+        }
+    }
+
+    private fun sendVerificationEmail() {
+        val user = auth.currentUser
+        user?.sendEmailVerification()
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("EmailVerification", "Verification email sent")
+                } else {
+                    Log.e("EmailVerification", "Error sending email: ${task.exception?.message}")
+                }
         }
     }
 
@@ -77,6 +94,10 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
     }
 
     fun signUpScreenInputValid(): Boolean{
-        return email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty() && surname.isNotEmpty()
+        return email.isNotEmpty() && password.isNotEmpty() && name.isNotEmpty() && surname.isNotEmpty() && birthDate != null
+    }
+
+    fun phoneNotEmpty(): Boolean{
+        return prefix.isNotEmpty() && phone.isNotEmpty()
     }
 }

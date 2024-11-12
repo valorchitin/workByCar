@@ -1,6 +1,8 @@
 package com.example.workbycar.ui.views.sign_up
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -32,6 +35,8 @@ import com.example.workbycar.ui.view_models.SignUpViewModel
 
 @Composable
 fun AddPhoneScreen(navController: NavController, signUpViewModel: SignUpViewModel){
+    val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         signUpViewModel.loadCurrentUser()
     }
@@ -45,7 +50,7 @@ fun AddPhoneScreen(navController: NavController, signUpViewModel: SignUpViewMode
         Spacer(modifier = Modifier.height(8.dp))
         PhoneTextView(signUpViewModel)
         Spacer(modifier = Modifier.height(16.dp))
-        ButtonPhoneScreen(navController, signUpViewModel)
+        ButtonSendMessage(navController, signUpViewModel, context)
     }
 }
 
@@ -119,18 +124,24 @@ fun PhoneTextView(signUpViewModel: SignUpViewModel) {
 }
 
 @Composable
-fun ButtonPhoneScreen(navController: NavController, signUpViewModel: SignUpViewModel){
+fun ButtonSendMessage(navController: NavController, signUpViewModel: SignUpViewModel, context: Context){
     Button(
         onClick = {
-            signUpViewModel.addPhone(signUpViewModel.phone, signUpViewModel.prefix) { success ->
-                if (success) {
-                    navController.navigate(AppScreens.MainScreen.route)
-                } else {
-                    Log.e("AddPhoneScreen", "Error al guardar el número de teléfono")
+            if (signUpViewModel.phoneNotEmpty()) {
+                signUpViewModel.addPhone(signUpViewModel.phone, signUpViewModel.prefix){ success ->
+                    if (success){
+                        navController.navigate(AppScreens.MainScreen.route) {
+                            popUpTo(AppScreens.LogInScreen.route) { inclusive = true }
+                        }
+                    }else{
+                        Log.e("AddPhoneScreen", "Error al enviar el sms")
+                    }
                 }
+            } else {
+                Toast.makeText(context, "Empty requested values", Toast.LENGTH_LONG).show()
             }
         }
     ) {
-        Text("Continue")
+        Text("Add phone")
     }
 }
