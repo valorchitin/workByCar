@@ -19,16 +19,22 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(private val authRepository: AuthRepository): ViewModel(){
     var currentUser by mutableStateOf(UserLogged("", "", "", "", null, ""))
+    var name by mutableStateOf("")
+    var surname by mutableStateOf("")
+    var birthDate by mutableStateOf<Long?>(null)
 
     init {
         userInfo()
     }
 
-    private fun userInfo(){
+    fun userInfo(){
         viewModelScope.launch {
             authRepository.getCurrentUser(CallBackHandle(
                 onSuccess = { user ->
                     currentUser = user
+                    name = currentUser.name
+                    surname = currentUser.surname
+                    birthDate = currentUser.birthDate
                 },
                 onError = {
                     Log.e("ProfileViewModel", "Error al acceder a la informacion del usuario: $it")

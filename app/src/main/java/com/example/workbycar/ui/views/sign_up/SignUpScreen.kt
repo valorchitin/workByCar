@@ -65,6 +65,10 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel)
             }
         } else {
             item {
+                Text("Message sent.")
+                Text("Please verify your email address through mail")
+            }
+            item {
                 ContinueButton(navController, context)
             }
         }
