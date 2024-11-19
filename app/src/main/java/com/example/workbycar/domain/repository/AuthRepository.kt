@@ -11,5 +11,5 @@ interface AuthRepository {
 
     fun logout(callBack: CallBackHandle<Boolean>)
 
-    suspend fun createUserWithEmailAndPassword(email: String, password: String, name: String, surname: String, birthDate: Long?, phone: String, callBack: CallBackHandle<Boolean>)
+    suspend fun createUserWithEmailAndPassword(email: String, password: String, name: String, surname: String, birthDate: Long?, prefix: String, phone: String, callBack: CallBackHandle<Boolean>)
 }

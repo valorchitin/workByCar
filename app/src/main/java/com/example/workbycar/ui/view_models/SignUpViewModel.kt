@@ -34,7 +34,8 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
                 name,
                 surname,
                 birthDate,
-                "",
+                prefix,
+                phone,
                 CallBackHandle(
                     onSuccess = {
                         authResult.invoke(it)
@@ -48,7 +49,7 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
         }
     }
 
-    private fun sendVerificationEmail() {
+    fun sendVerificationEmail() {
         val user = auth.currentUser
         user?.sendEmailVerification()
             ?.addOnCompleteListener { task ->
@@ -67,7 +68,8 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
                     .collection("usuarios")
                     .document(user.uid)
                     .update(
-                        "phone", (prefix + phone)
+                        "prefix", (prefix),
+                        "phone", (phone)
                     )
                     .addOnSuccessListener {
                         authResult(true)
@@ -75,7 +77,6 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
                     .addOnFailureListener{
                         authResult(false)
                     }
-
             }
         }
     }

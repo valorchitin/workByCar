@@ -75,7 +75,7 @@ fun ButtonLogIn(navController: NavController, loginViewModel: LoginViewModel, co
                     popUpTo(AppScreens.SplashScreen.route) { inclusive = true }
                 }
             } else {
-                Toast.makeText(context, "Error on Sign In", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Wrong credentials", Toast.LENGTH_LONG).show()
             }
         }}
     ) {
