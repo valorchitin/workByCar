@@ -42,36 +42,36 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel)
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (!isSignUpSucces) {
-            item {
-                EmailTextViewForSignUp(signUpViewModel)
-            }
-            item {
-                PasswordTextViewForSignUp(signUpViewModel)
-            }
-            item {
-                NameTextView(signUpViewModel)
-            }
-            item {
-                SurnameTextView(signUpViewModel)
-            }
-            item {
-                BirthDateButton(signUpViewModel)
-            }
-            item {
-                ButtonSignUp(signUpViewModel, context){ signUpSuccesful ->
-                    isSignUpSucces = signUpSuccesful
-                }
-            }
-        } else {
-            item {
-                Text("Message sent.")
-                Text("Please verify your email address through mail")
-            }
-            item {
-                ContinueButton(navController, context)
-            }
+        //if (!isSignUpSucces) {
+        item {
+            EmailTextViewForSignUp(signUpViewModel)
         }
+        item {
+            PasswordTextViewForSignUp(signUpViewModel)
+        }
+        item {
+            NameTextView(signUpViewModel)
+        }
+        item {
+            SurnameTextView(signUpViewModel)
+        }
+        item {
+            BirthDateButton(signUpViewModel)
+        }
+        item {
+            ButtonSignUp(signUpViewModel, context, navController)//{ signUpSuccesful ->
+                //isSignUpSucces = signUpSuccesful
+            //}
+        }
+        //} else {
+        //    item {
+        //        Text("Message sent.")
+        //        Text("Please verify your email address through mail")
+        //    }
+        //    item {
+        //        ContinueButton(navController, context)
+        //    }
+        //}
     }
 }
 
@@ -185,45 +185,18 @@ fun DatePickerModal(
 }
 
 @Composable
-fun ButtonSignUp(signUpViewModel: SignUpViewModel, context: Context, onSignUpSucces: (Boolean) -> Unit) {
+fun ButtonSignUp(signUpViewModel: SignUpViewModel, context: Context, navController: NavController) {
     Button(
         onClick = {
             if (signUpViewModel.signUpScreenInputValid()){
-                signUpViewModel.signUp { success ->
-                    if (success) {
-                        onSignUpSucces(true)
-                    } else {
-                        Toast.makeText(context, "Error on Sign In", Toast.LENGTH_LONG).show()
-                    }
+                navController.navigate(AppScreens.AddPhoneScreen.route) {
+                    popUpTo(AppScreens.SignUpScreen.route) {inclusive = true}
                 }
             } else {
                 Toast.makeText(context, "Empty requested values", Toast.LENGTH_LONG).show()
             }
         }
     ) {
-        Text(text = "Sign up")
-    }
-}
-
-@Composable
-fun ContinueButton(navController: NavController, context: Context){
-    Button(
-        onClick ={
-            val user = FirebaseAuth.getInstance().currentUser
-            user?.reload()?.addOnCompleteListener { task ->
-                if (task.isSuccessful){
-                    if (user.isEmailVerified){
-                        navController.navigate(AppScreens.AddPhoneScreen.route)
-                    } else {
-                        Toast.makeText(context,"Verify your email",  Toast.LENGTH_LONG).show()
-                    }
-                } else {
-                    Toast.makeText(context, "Error reloading user data", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    ) {
         Text(text = "Continue")
     }
 }
-

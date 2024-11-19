@@ -3,6 +3,7 @@ package com.example.workbycar.ui.views.sign_up
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +17,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,31 +28,63 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun AddPhoneScreen(navController: NavController, signUpViewModel: SignUpViewModel){
     val context = LocalContext.current
 
+    var isSignUpSucces by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         signUpViewModel.loadCurrentUser()
+        Log.d("Datos sign up: ", signUpViewModel.name)
     }
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        PhoneCodeDropDown(signUpViewModel)
-        Spacer(modifier = Modifier.height(8.dp))
-        PhoneTextView(signUpViewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        ButtonSendMessage(navController, signUpViewModel, context)
+    if (!isSignUpSucces) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PhoneCodeDropDown(signUpViewModel)
+            Spacer(modifier = Modifier.height(8.dp))
+            PhoneTextView(signUpViewModel)
+            Spacer(modifier = Modifier.height(16.dp))
+            ButtonSendMessage(signUpViewModel, context){ signUpSuccesful ->
+                isSignUpSucces = signUpSuccesful
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Message sent.")
+            Text("Please verify your email address through mail")
+            ContinueButton(navController, context)
+            Text(
+                text = "If you have not received the message\nor\nencountered another problem,\nclick the following link:",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                textAlign = TextAlign.Center
+            )
+            SendMessageHyperLinkText(signUpViewModel)
+        }
     }
 }
 
@@ -124,18 +158,16 @@ fun PhoneTextView(signUpViewModel: SignUpViewModel) {
 }
 
 @Composable
-fun ButtonSendMessage(navController: NavController, signUpViewModel: SignUpViewModel, context: Context){
+fun ButtonSendMessage(signUpViewModel: SignUpViewModel, context: Context, onSignUpSucces: (Boolean) -> Unit){
     Button(
         onClick = {
             if (signUpViewModel.phoneNotEmpty()) {
-                signUpViewModel.addPhone(signUpViewModel.phone, signUpViewModel.prefix){ success ->
-                    if (success){
-                        navController.navigate(AppScreens.MainScreen.route) {
-                            popUpTo(AppScreens.LogInScreen.route) { inclusive = true }
-                        }
-                    }else{
-                        Log.e("AddPhoneScreen", "Error al enviar el sms")
-                    }
+                signUpViewModel.signUp { success ->
+                       if (success) {
+                           onSignUpSucces(true)
+                       } else {
+                            Toast.makeText(context, "Error on Sign In", Toast.LENGTH_LONG).show()
+                       }
                 }
             } else {
                 Toast.makeText(context, "Empty requested values", Toast.LENGTH_LONG).show()
@@ -143,5 +175,39 @@ fun ButtonSendMessage(navController: NavController, signUpViewModel: SignUpViewM
         }
     ) {
         Text("Add phone")
+    }
+}
+
+@Composable
+fun SendMessageHyperLinkText(signUpViewModel: SignUpViewModel){
+    Text(
+        text = "send message again",
+        modifier = Modifier.clickable{
+            signUpViewModel.sendVerificationEmail()
+        },
+        color = Color.Blue,
+        textDecoration = TextDecoration.Underline
+    )
+}
+
+@Composable
+fun ContinueButton(navController: NavController, context: Context){
+    Button(
+        onClick ={
+            val user = FirebaseAuth.getInstance().currentUser
+            user?.reload()?.addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    if (user.isEmailVerified){
+                        navController.navigate(AppScreens.MainScreen.route)
+                    } else {
+                        Toast.makeText(context,"Verify your email",  Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(context, "Error reloading user data", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    ) {
+        Text(text = "Continue")
     }
 }

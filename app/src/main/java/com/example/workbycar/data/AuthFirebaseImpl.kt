@@ -19,6 +19,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                     val name = user.getString("name") ?: ""
                     val surname = user.getString("surname") ?: ""
                     val birthDate = user.getLong("birthDate")
+                    val prefix = user.getString("prefix") ?: ""
                     val phone = user.getString("phone") ?: ""
 
                     val userLogged = UserLogged(
@@ -27,6 +28,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                         name = name,
                         surname = surname,
                         birthDate = birthDate,
+                        prefix = prefix,
                         phone = phone,
                     )
                     callBack.onSuccess.invoke(userLogged)
@@ -65,6 +67,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
         name: String,
         surname: String,
         birthDate: Long?,
+        prefix: String,
         phone: String,
         callBack: CallBackHandle<Boolean>
     ) {
@@ -77,6 +80,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                             "name" to name,
                             "surname" to surname,
                             "birthDate" to birthDate,
+                            "prefix" to prefix,
                             "phone" to phone
                         )
 

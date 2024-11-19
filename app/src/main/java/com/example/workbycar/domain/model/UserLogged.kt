@@ -6,5 +6,6 @@ data class UserLogged(
     val name: String = "",
     val surname: String = "",
     val birthDate: Long?,
+    val prefix: String = "",
     val phone: String = "",
 )

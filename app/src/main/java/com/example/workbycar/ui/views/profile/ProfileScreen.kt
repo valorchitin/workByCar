@@ -1,5 +1,6 @@
 package com.example.workbycar.ui.views.profile
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -17,13 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
@@ -42,7 +42,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
 
     val user = profileViewModel.currentUser
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    val formattedBirthDate = user.birthDate?.let {
+    val formattedBirthDate = user?.birthDate?.let {
         dateFormat.format(Date(it))
     } ?: "Fecha no válida"
     Scaffold ( topBar = {
@@ -57,12 +57,19 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
                 .padding(16.dp)
         ) {
             item {
-                TextInfo("Name", user.name)
-                TextInfo("Surname", user.surname)
-                TextInfo("Birthdate", formattedBirthDate)
-                TextInfo("Phone", user.phone)
-                Spacer(modifier = Modifier.height(32.dp))
-                HyperLinkText(navController)
+                if (user != null) {
+                    TextInfo("Name", user.name)
+                    TextInfo("Surname", user.surname)
+                    TextInfo("Birthdate", formattedBirthDate)
+                    TextInfo("Phone", (user.prefix + user.phone))
+                    TextInfo("Email", user.email)
+                    Spacer(modifier = Modifier.height(32.dp))
+                    HyperLinkText(navController)
+                    Spacer(modifier = Modifier.height(44.dp))
+                    LogOutButton(navController, profileViewModel)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DeleteAcountButton(navController, profileViewModel)
+                }
             }
         }
         Column (
@@ -92,4 +99,28 @@ fun HyperLinkText(navController: NavController){
         color = Color.Blue,
         textDecoration = TextDecoration.Underline
     )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun LogOutButton(navController: NavController, profileViewModel: ProfileViewModel){
+    Button(onClick = {
+        profileViewModel.logOut()
+        navController.navigate(AppScreens.LogInScreen.route){
+            popUpTo(0)
+        }
+    }) {
+        Text("Log out")
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun DeleteAcountButton(navController: NavController, profileViewModel: ProfileViewModel){
+    val context = LocalContext.current
+    Button(onClick = {
+        profileViewModel.deleteAccount(navController, context)
+    }) {
+        Text("Delete account")
+    }
 }
