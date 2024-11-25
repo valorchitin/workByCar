@@ -23,7 +23,7 @@ import com.example.workbycar.ui.views.trips.TripsScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewModel, profileViewModel: ProfileViewModel, postTripsViewModel: PostTripsViewModel) {
+fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewModel, profileViewModel: ProfileViewModel){//, postTripsViewModel: PostTripsViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -55,7 +55,7 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
             EditUserInfoScreen(navController, profileViewModel)
         }
         composable(AppScreens.StartTripScreen.route) {
-            StartTripScreen(navController, postTripsViewModel)
+            StartTripScreen(navController)//, postTripsViewModel)
         }
         composable(AppScreens.MessagesScreen.route) {
             MessagesScreen(navController)
