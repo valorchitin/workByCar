@@ -82,4 +82,9 @@ dependencies {
     //Librerias hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
+
+    //Librerias google apis
+    implementation(libs.play.services.places)
+    implementation(libs.play.services.maps)
+    implementation(libs.play.services.location)
 }

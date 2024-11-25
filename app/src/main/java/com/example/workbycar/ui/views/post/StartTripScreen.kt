@@ -16,10 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartTripScreen(navController: NavController){
+fun StartTripScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
     Scaffold(topBar = {
             TopAppBar(
                 title = {Text(text = "StartTripScreen")},
@@ -45,4 +46,9 @@ fun StartTripContent(modifier: Modifier = Modifier){
     ) {
         Text("Start Trip Screen")
     }
+}
+
+@Composable
+fun OriginTextView(){
+
 }

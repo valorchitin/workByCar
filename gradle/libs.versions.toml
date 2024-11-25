@@ -18,6 +18,9 @@ navigationCompose = "2.8.2"
 google-services = "4.4.2"
 firebaseAuthKtx = "23.0.0"
 firebaseFirestoreKtx = "25.1.0"
+playServicesLocation = "21.3.0"
+playServicesMaps = "19.0.0"
+playServicesPlaces = "17.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +47,9 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
+play-services-places = { module = "com.google.android.gms:play-services-places", version.ref = "playServicesPlaces" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
