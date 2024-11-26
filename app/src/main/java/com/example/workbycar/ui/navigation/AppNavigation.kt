@@ -15,15 +15,17 @@ import com.example.workbycar.ui.views.MainScreen
 import com.example.workbycar.ui.views.sign_up.SignUpScreen
 import com.example.workbycar.ui.views.SplashScreen
 import com.example.workbycar.ui.views.messages.MessagesScreen
+import com.example.workbycar.ui.views.post.OriginInMapScreen
 import com.example.workbycar.ui.views.post.StartTripScreen
 import com.example.workbycar.ui.views.profile.EditUserInfoScreen
 import com.example.workbycar.ui.views.profile.ProfileScreen
 import com.example.workbycar.ui.views.sign_up.AddPhoneScreen
 import com.example.workbycar.ui.views.trips.TripsScreen
+import com.google.android.libraries.places.api.net.PlacesClient
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewModel, profileViewModel: ProfileViewModel){//, postTripsViewModel: PostTripsViewModel) {
+fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewModel, profileViewModel: ProfileViewModel, postTripsViewModel: PostTripsViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -55,7 +57,10 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
             EditUserInfoScreen(navController, profileViewModel)
         }
         composable(AppScreens.StartTripScreen.route) {
-            StartTripScreen(navController)//, postTripsViewModel)
+            StartTripScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.OriginInMapScreen.route) {
+            OriginInMapScreen(navController, postTripsViewModel)
         }
         composable(AppScreens.MessagesScreen.route) {
             MessagesScreen(navController)
