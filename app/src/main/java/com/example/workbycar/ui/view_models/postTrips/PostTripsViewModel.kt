@@ -1,11 +1,15 @@
 package com.example.workbycar.ui.view_models.postTrips
 
+import android.location.Address
+import android.location.Geocoder
+import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workbycar.domain.repository.AuthRepository
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -17,9 +21,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostTripsViewModel @Inject constructor(private val authRepository: AuthRepository,
-    val placesClient: PlacesClient): ViewModel() {
+                                             private val placesClient: PlacesClient,
+                                             private val geocoder: Geocoder): ViewModel() {
         private var sessionToken = AutocompleteSessionToken.newInstance()
         var origin by mutableStateOf("")
+        var origincoordinates by mutableStateOf(LatLng(0.0, 0.0))
         var predictions by mutableStateOf(listOf<Pair<String, String>>())
 
         fun onOriginChange(newOrigin: String){
@@ -45,5 +51,25 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
             } else {
                 predictions = emptyList()
             }
+        }
+
+        fun getCoordinates(address: String){
+            try {
+                val address: List<Address>? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    geocoder.getFromLocationName(origin, 1)
+                } else {
+                    @Suppress("DEPRECATION")
+                    geocoder.getFromLocationName(origin, 1)
+                }
+                address?.firstOrNull()?.let { location ->
+                    origincoordinates = LatLng(location.latitude, location.longitude)
+                }
+            } catch (e: Exception){
+                e.printStackTrace()
+            }
+        }
+
+        fun updateOriginCoordinates(newCoordinates: LatLng) {
+            origincoordinates = newCoordinates
         }
 }

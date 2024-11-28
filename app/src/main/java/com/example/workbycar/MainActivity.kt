@@ -18,12 +18,10 @@ import com.example.workbycar.ui.view_models.SignUpViewModel
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    lateinit var placesClient: PlacesClient
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -34,7 +32,6 @@ class MainActivity : ComponentActivity() {
         val postTripsViewModel: PostTripsViewModel by viewModels()
         super.onCreate(savedInstanceState)
         Places.initialize(this, getString(R.string.google_maps_api_key))
-        placesClient = Places.createClient(this)
         enableEdgeToEdge()
         setContent {
             WorkByCarTheme {
