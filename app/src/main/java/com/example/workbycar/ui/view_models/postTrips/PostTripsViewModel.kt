@@ -25,14 +25,16 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
                                              private val geocoder: Geocoder): ViewModel() {
         private var sessionToken = AutocompleteSessionToken.newInstance()
         var origin by mutableStateOf("")
+        var destination by mutableStateOf("")
         var origincoordinates by mutableStateOf(LatLng(0.0, 0.0))
+        var destinationcoordinates by mutableStateOf(LatLng(0.0, 0.0))
         var predictions by mutableStateOf(listOf<Pair<String, String>>())
 
-        fun onOriginChange(newOrigin: String){
-            if (newOrigin.isNotEmpty()) {
+        fun onPlaceChange(newPlace: String){
+            if (newPlace.isNotEmpty()) {
                 viewModelScope.launch(Dispatchers.IO) {
                     val request = FindAutocompletePredictionsRequest.builder()
-                        .setQuery(newOrigin)
+                        .setQuery(newPlace)
                         .setSessionToken(sessionToken)
                         .build()
 
@@ -53,23 +55,24 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
             }
         }
 
-        fun getCoordinates(address: String){
+        fun getCoordinates(address: String, type: Int){
             try {
                 val address: List<Address>? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    geocoder.getFromLocationName(origin, 1)
+                    geocoder.getFromLocationName(address, 1)
                 } else {
                     @Suppress("DEPRECATION")
-                    geocoder.getFromLocationName(origin, 1)
+                    geocoder.getFromLocationName(address, 1)
                 }
                 address?.firstOrNull()?.let { location ->
-                    origincoordinates = LatLng(location.latitude, location.longitude)
+                    if(type == 0){
+                        origincoordinates = LatLng(location.latitude, location.longitude)
+                    }
+                    else {
+                        destinationcoordinates = LatLng(location.latitude, location.longitude)
+                    }
                 }
             } catch (e: Exception){
                 e.printStackTrace()
             }
-        }
-
-        fun updateOriginCoordinates(newCoordinates: LatLng) {
-            origincoordinates = newCoordinates
         }
 }

@@ -32,37 +32,37 @@ import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartTripScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
+fun DestinationTripScreen(navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Scaffold(topBar = {
-            TopAppBar(
-                title = {Text(text = "StartTripScreen")},
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
-                    }
+        TopAppBar(
+            title = { Text(text = "DestinationTripScreen") },
+            navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
                 }
-            )
+            }
+        )
     }) { paddingValues ->
-            StartTripContent(navController, Modifier.padding(paddingValues), postTripsViewModel)
+        DestinationTripContent(navController, Modifier.padding(paddingValues), postTripsViewModel)
     }
 }
 
 @Composable
-fun StartTripContent(navController: NavController, modifier: Modifier = Modifier, postTripsViewModel: PostTripsViewModel){
+fun DestinationTripContent(navController: NavController, modifier: Modifier = Modifier, postTripsViewModel: PostTripsViewModel){
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Where do you leave from?")
-        OriginTextView(navController, postTripsViewModel)
+        Text("Where are you going?")
+        DestinationTextView(navController, postTripsViewModel)
     }
 }
 
 @Composable
-fun OriginTextView(navController: NavController, postTripsViewModel: PostTripsViewModel) {
+fun DestinationTextView(navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -70,10 +70,10 @@ fun OriginTextView(navController: NavController, postTripsViewModel: PostTripsVi
         horizontalAlignment = Alignment.Start
     ) {
         TextField(
-            value = postTripsViewModel.origin,
-            onValueChange = { newOrigin ->
-                postTripsViewModel.origin = newOrigin
-                postTripsViewModel.onPlaceChange(newOrigin)
+            value = postTripsViewModel.destination,
+            onValueChange = { newDestination ->
+                postTripsViewModel.destination = newDestination
+                postTripsViewModel.onPlaceChange(newDestination)
             },
             label = { Text("Write the full address") },
             modifier = Modifier.fillMaxWidth()
@@ -88,9 +88,9 @@ fun OriginTextView(navController: NavController, postTripsViewModel: PostTripsVi
                         .fillMaxWidth()
                         .padding(8.dp)
                         .clickable {
-                            postTripsViewModel.origin = predictionText
-                            postTripsViewModel.getCoordinates(postTripsViewModel.origin, 0)
-                            navController.navigate(AppScreens.OriginInMapScreen.route)
+                            postTripsViewModel.destination = predictionText
+                            postTripsViewModel.getCoordinates(postTripsViewModel.destination, 1)
+                            navController.navigate(AppScreens.DestinationInMapScreen.route)
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {

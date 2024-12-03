@@ -10,6 +10,10 @@ sealed class AppScreens(val route: String) {
     object ProfileScreen: AppScreens("profile_screen")
     object EditUserInfoScreen: AppScreens("edit_user_info_screen")
     object StartTripScreen: AppScreens("start_trip_screen")
-    object MessagesScreen: AppScreens("messages_screen")
     object OriginInMapScreen: AppScreens("origin_in_map_screen")
+    object DestinationTripScreen: AppScreens("destination_trip_screen")
+    object DestinationInMapScreen: AppScreens("destination_in_map_screen")
+    object RouteSelectionScreen: AppScreens("route_selection_screen")
+    object MessagesScreen: AppScreens("messages_screen")
+
 }

@@ -30,7 +30,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OriginInMapScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
+fun DestinationInMapScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "StartTripScreen") },
@@ -46,9 +46,8 @@ fun OriginInMapScreen(navController: NavController, postTripsViewModel: PostTrip
         Column (
             modifier = Modifier.padding(paddingValues)
         ){
-            Text("Origin in map")
-            Text("Coordinates: ${postTripsViewModel.origincoordinates}")
-            SelectOriginMap (navController, postTripsViewModel) {selectedLocation ->
+            Text("Coordinates: ${postTripsViewModel.destinationcoordinates}")
+            SelectDestinationMap (navController, postTripsViewModel) {selectedLocation ->
                 Log.d("SelectLocationMap", "Ubicación seleccionada: ${selectedLocation.latitude}, ${selectedLocation.longitude}")
             }
         }
@@ -58,13 +57,13 @@ fun OriginInMapScreen(navController: NavController, postTripsViewModel: PostTrip
 
 
 @Composable
-fun SelectOriginMap(
+fun SelectDestinationMap(
     navController: NavController,
     postTripsViewModel: PostTripsViewModel,
     onLocationSelected: (LatLng) -> Unit
 ) {
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(postTripsViewModel.origincoordinates, 15f)
+        position = CameraPosition.fromLatLngZoom(postTripsViewModel.destinationcoordinates, 15f)
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -73,20 +72,20 @@ fun SelectOriginMap(
             cameraPositionState = cameraPositionState,
             onMapClick = { newCoordinates ->
                 Log.d("NewLocation", "New coordinates: $newCoordinates")
-                postTripsViewModel.origincoordinates = newCoordinates
+                postTripsViewModel.destinationcoordinates = newCoordinates
             }
         ){
             Marker(
-                state = MarkerState(position = postTripsViewModel.origincoordinates),
+                state = MarkerState(position = postTripsViewModel.destinationcoordinates),
                 title = "Selected Location"
             )
         }
 
         Button(
             onClick = {
-                onLocationSelected(postTripsViewModel.origincoordinates)
-                navController.navigate(AppScreens.DestinationTripScreen.route)
-                      },
+                onLocationSelected(postTripsViewModel.destinationcoordinates)
+                navController.navigate(AppScreens.RouteSelectionScreen.route)
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)

@@ -15,7 +15,10 @@ import com.example.workbycar.ui.views.MainScreen
 import com.example.workbycar.ui.views.sign_up.SignUpScreen
 import com.example.workbycar.ui.views.SplashScreen
 import com.example.workbycar.ui.views.messages.MessagesScreen
+import com.example.workbycar.ui.views.post.DestinationInMapScreen
+import com.example.workbycar.ui.views.post.DestinationTripScreen
 import com.example.workbycar.ui.views.post.OriginInMapScreen
+import com.example.workbycar.ui.views.post.RouteSelectionScreen
 import com.example.workbycar.ui.views.post.StartTripScreen
 import com.example.workbycar.ui.views.profile.EditUserInfoScreen
 import com.example.workbycar.ui.views.profile.ProfileScreen
@@ -53,7 +56,7 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
         composable(AppScreens.ProfileScreen.route) {
             ProfileScreen(navController, profileViewModel)
         }
-        composable(AppScreens.EditUserInfoScreen.route){
+        composable(AppScreens.EditUserInfoScreen.route) {
             EditUserInfoScreen(navController, profileViewModel)
         }
         composable(AppScreens.StartTripScreen.route) {
@@ -61,6 +64,15 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
         }
         composable(AppScreens.OriginInMapScreen.route) {
             OriginInMapScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.DestinationTripScreen.route) {
+            DestinationTripScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.DestinationInMapScreen.route) {
+            DestinationInMapScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.RouteSelectionScreen.route){
+            RouteSelectionScreen(navController, postTripsViewModel)
         }
         composable(AppScreens.MessagesScreen.route) {
             MessagesScreen(navController)
