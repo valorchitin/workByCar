@@ -3,16 +3,23 @@ package com.example.workbycar.ui.view_models.postTrips
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.workbycar.R
+import com.example.workbycar.data.ApiKeyProvider
+import com.example.workbycar.domain.model.Route
 import com.example.workbycar.domain.repository.AuthRepository
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.example.workbycar.domain.repository.DirectionsAPIService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,13 +29,22 @@ import javax.inject.Inject
 @HiltViewModel
 class PostTripsViewModel @Inject constructor(private val authRepository: AuthRepository,
                                              private val placesClient: PlacesClient,
-                                             private val geocoder: Geocoder): ViewModel() {
+                                             private val geocoder: Geocoder,
+                                             private val directionsAPIService: DirectionsAPIService,
+                                             private val apiKeyProvider: ApiKeyProvider): ViewModel() {
         private var sessionToken = AutocompleteSessionToken.newInstance()
         var origin by mutableStateOf("")
         var destination by mutableStateOf("")
         var origincoordinates by mutableStateOf(LatLng(0.0, 0.0))
         var destinationcoordinates by mutableStateOf(LatLng(0.0, 0.0))
         var predictions by mutableStateOf(listOf<Pair<String, String>>())
+
+        // Routes
+        private val _routes = MutableLiveData<List<Route>>()
+        val routes: LiveData<List<Route>> = _routes
+        private val _selectedRouteIndex = MutableLiveData(0)
+        val selectedRouteIndex: LiveData<Int> = _selectedRouteIndex
+        var selectedRoute by mutableStateOf<Route?>(null)
 
         fun onPlaceChange(newPlace: String){
             if (newPlace.isNotEmpty()) {
@@ -74,5 +90,60 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
             } catch (e: Exception){
                 e.printStackTrace()
             }
+        }
+
+        fun getRoutes(origin: LatLng, destination: LatLng) {
+            viewModelScope.launch {
+                try {
+                    val originStr = "${origin.latitude},${origin.longitude}"
+                    val destinationStr = "${destination.latitude},${destination.longitude}"
+                    val apiKey = apiKeyProvider.getApiKey()
+
+                    val response = directionsAPIService.getDirections(originStr, destinationStr, true, apiKey)
+
+                    _routes.postValue(response.routes)
+                } catch (e: Exception) {
+                    Log.e("DirectionsAPI", "Error fetching routes: ${e.message}")
+                }
+            }
+        }
+
+        fun selectRoute(index: Int) {
+            _selectedRouteIndex.value = index
+        }
+
+        fun decodePolyline(encoded: String): List<LatLng> {
+            val poly = ArrayList<LatLng>()
+            var index = 0
+            val len = encoded.length
+            var lat = 0
+            var lng = 0
+
+            while (index < len) {
+                var b: Int
+                var shift = 0
+                var result = 0
+                do {
+                    b = encoded[index++].code - 63
+                    result = result or (b and 0x1f shl shift)
+                    shift += 5
+                } while (b >= 0x20)
+                val dLat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+                lat += dLat
+
+                shift = 0
+                result = 0
+                do {
+                    b = encoded[index++].code - 63
+                    result = result or (b and 0x1f shl shift)
+                    shift += 5
+                } while (b >= 0x20)
+                val dLng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+                lng += dLng
+
+                poly.add(LatLng(lat / 1E5, lng / 1E5))
+            }
+
+            return poly
         }
 }

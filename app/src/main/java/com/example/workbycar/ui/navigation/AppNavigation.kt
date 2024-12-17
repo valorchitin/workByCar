@@ -15,6 +15,7 @@ import com.example.workbycar.ui.views.MainScreen
 import com.example.workbycar.ui.views.sign_up.SignUpScreen
 import com.example.workbycar.ui.views.SplashScreen
 import com.example.workbycar.ui.views.messages.MessagesScreen
+import com.example.workbycar.ui.views.post.DateSelectionScreen
 import com.example.workbycar.ui.views.post.DestinationInMapScreen
 import com.example.workbycar.ui.views.post.DestinationTripScreen
 import com.example.workbycar.ui.views.post.OriginInMapScreen
@@ -73,6 +74,9 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
         }
         composable(AppScreens.RouteSelectionScreen.route){
             RouteSelectionScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.DateSelectionScreen.route){
+            DateSelectionScreen(navController, postTripsViewModel)
         }
         composable(AppScreens.MessagesScreen.route) {
             MessagesScreen(navController)
