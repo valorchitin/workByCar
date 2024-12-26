@@ -1,5 +1,7 @@
 package com.example.workbycar.ui.views.post
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,6 +41,7 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteSelectionScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
@@ -62,6 +65,7 @@ fun RouteSelectionScreen(navController: NavController, postTripsViewModel: PostT
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Routes(
     postTripsViewModel: PostTripsViewModel,

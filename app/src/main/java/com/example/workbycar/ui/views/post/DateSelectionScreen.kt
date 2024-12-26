@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -60,20 +63,30 @@ fun DateSelectionScreen(navController: NavController, postTripsViewModel: PostTr
         Column (
             modifier = Modifier.padding(paddingValues)
         ){
-            Text(text = "Please select the days you offer the trip")
-            MultiSelectCalendar { selectedDates ->
-                println("Fechas seleccionadas: $selectedDates")
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(text = "Please select the days you offer the trip")
+                MultiSelectCalendar (postTripsViewModel)
+                Button(
+                    onClick = {
+                        navController.navigate(AppScreens.DepartureTimeSelectionScreen.route)
+                    },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                ) {
+                    Text(text = "Continue")
+                }
             }
-            Log.d("Selected route", "Selected route: ${postTripsViewModel.selectedRoute}")
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MultiSelectCalendar(onDatesSelected: (Set<LocalDate>) -> Unit) {
+fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
     val currentMonth = remember { mutableStateOf(YearMonth.now()) }
-    val selectedDates = remember { mutableStateOf(setOf<LocalDate>()) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -131,7 +144,7 @@ fun MultiSelectCalendar(onDatesSelected: (Set<LocalDate>) -> Unit) {
                         val dayOfMonth = (week * 7 + day) - firstDayOfWeek + 1
                         if (dayOfMonth in 1..daysInMonth) {
                             val date = LocalDate.of(currentMonth.value.year, currentMonth.value.month, dayOfMonth)
-                            val isSelected = selectedDates.value.contains(date)
+                            val isSelected = postTripsViewModel.dates.contains(date)
 
                             Box(
                                 modifier = Modifier
@@ -141,14 +154,13 @@ fun MultiSelectCalendar(onDatesSelected: (Set<LocalDate>) -> Unit) {
                                         shape = CircleShape
                                     )
                                     .clickable {
-                                        val updatedDates = selectedDates.value.toMutableSet()
+                                        val updatedDates = postTripsViewModel.dates.toMutableSet()
                                         if (isSelected) {
                                             updatedDates.remove(date)
                                         } else {
                                             updatedDates.add(date)
                                         }
-                                        selectedDates.value = updatedDates
-                                        onDatesSelected(updatedDates)
+                                        postTripsViewModel.dates = updatedDates
                                     },
                                 contentAlignment = Alignment.Center
                             ) {

@@ -4,6 +4,7 @@ import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,7 +12,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.workbycar.R
 import com.example.workbycar.data.ApiKeyProvider
 import com.example.workbycar.domain.model.Route
 import com.example.workbycar.domain.repository.AuthRepository
@@ -20,12 +20,16 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.example.workbycar.domain.repository.DirectionsAPIService
+//import com.google.android.libraries.places.api.model.LocalTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDate
+import java.time.LocalTime
 import javax.inject.Inject
 
+@RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
 class PostTripsViewModel @Inject constructor(private val authRepository: AuthRepository,
                                              private val placesClient: PlacesClient,
@@ -45,6 +49,12 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
         private val _selectedRouteIndex = MutableLiveData(0)
         val selectedRouteIndex: LiveData<Int> = _selectedRouteIndex
         var selectedRoute by mutableStateOf<Route?>(null)
+
+        // Dates
+        var dates by mutableStateOf(setOf<LocalDate>())
+
+        // Departure hour
+        var departureHour by mutableStateOf(LocalTime.now())
 
         fun onPlaceChange(newPlace: String){
             if (newPlace.isNotEmpty()) {

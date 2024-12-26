@@ -15,6 +15,7 @@ sealed class AppScreens(val route: String) {
     object DestinationInMapScreen: AppScreens("destination_in_map_screen")
     object RouteSelectionScreen: AppScreens("route_selection_screen")
     object DateSelectionScreen: AppScreens("date_selection_screen")
+    object DepartureTimeSelectionScreen: AppScreens("departure_time_selection_screen")
     object MessagesScreen: AppScreens("messages_screen")
 
 }

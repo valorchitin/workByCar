@@ -3,6 +3,7 @@ package com.example.workbycar.ui.navigation
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,6 +17,7 @@ import com.example.workbycar.ui.views.sign_up.SignUpScreen
 import com.example.workbycar.ui.views.SplashScreen
 import com.example.workbycar.ui.views.messages.MessagesScreen
 import com.example.workbycar.ui.views.post.DateSelectionScreen
+import com.example.workbycar.ui.views.post.DepartureTimeSelectionScreen
 import com.example.workbycar.ui.views.post.DestinationInMapScreen
 import com.example.workbycar.ui.views.post.DestinationTripScreen
 import com.example.workbycar.ui.views.post.OriginInMapScreen
@@ -77,6 +79,9 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
         }
         composable(AppScreens.DateSelectionScreen.route){
             DateSelectionScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.DepartureTimeSelectionScreen.route){
+            DepartureTimeSelectionScreen(navController, postTripsViewModel)
         }
         composable(AppScreens.MessagesScreen.route) {
             MessagesScreen(navController)
