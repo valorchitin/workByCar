@@ -1,5 +1,7 @@
 package com.example.workbycar.ui.views.post
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartTripScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
@@ -49,6 +52,7 @@ fun StartTripScreen(navController: NavController, postTripsViewModel: PostTripsV
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StartTripContent(navController: NavController, modifier: Modifier = Modifier, postTripsViewModel: PostTripsViewModel){
     Column(
@@ -61,6 +65,7 @@ fun StartTripContent(navController: NavController, modifier: Modifier = Modifier
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun OriginTextView(navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Column(

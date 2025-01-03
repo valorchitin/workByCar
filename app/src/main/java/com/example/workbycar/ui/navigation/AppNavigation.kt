@@ -21,6 +21,8 @@ import com.example.workbycar.ui.views.post.DepartureTimeSelectionScreen
 import com.example.workbycar.ui.views.post.DestinationInMapScreen
 import com.example.workbycar.ui.views.post.DestinationTripScreen
 import com.example.workbycar.ui.views.post.OriginInMapScreen
+import com.example.workbycar.ui.views.post.PassengersNumberScreen
+import com.example.workbycar.ui.views.post.ReservationTypeScreen
 import com.example.workbycar.ui.views.post.RouteSelectionScreen
 import com.example.workbycar.ui.views.post.StartTripScreen
 import com.example.workbycar.ui.views.profile.EditUserInfoScreen
@@ -74,14 +76,20 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
         composable(AppScreens.DestinationInMapScreen.route) {
             DestinationInMapScreen(navController, postTripsViewModel)
         }
-        composable(AppScreens.RouteSelectionScreen.route){
+        composable(AppScreens.RouteSelectionScreen.route) {
             RouteSelectionScreen(navController, postTripsViewModel)
         }
-        composable(AppScreens.DateSelectionScreen.route){
+        composable(AppScreens.DateSelectionScreen.route) {
             DateSelectionScreen(navController, postTripsViewModel)
         }
-        composable(AppScreens.DepartureTimeSelectionScreen.route){
+        composable(AppScreens.DepartureTimeSelectionScreen.route) {
             DepartureTimeSelectionScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.PassengersNumberScreen.route) {
+            PassengersNumberScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.ReservationTypeScreen.route) {
+            ReservationTypeScreen(navController, postTripsViewModel)
         }
         composable(AppScreens.MessagesScreen.route) {
             MessagesScreen(navController)

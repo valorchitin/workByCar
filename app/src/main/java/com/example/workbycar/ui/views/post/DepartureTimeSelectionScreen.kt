@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -87,7 +88,9 @@ fun TimeSelector(navController: NavController, postTripsViewModel: PostTripsView
                 Text( text = postTripsViewModel.departureHour.format(timeFormatter))
             }
             Button(
-                onClick = { println(postTripsViewModel.departureHour)},
+                onClick = {
+                    navController.navigate(AppScreens.PassengersNumberScreen.route)
+                },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.dp)

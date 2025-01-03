@@ -6,6 +6,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
@@ -55,6 +56,12 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
 
         // Departure hour
         var departureHour by mutableStateOf(LocalTime.now())
+
+        // Passengers number
+        var passengersNumber by mutableIntStateOf(3)
+
+        // Reservation Type
+        var automatedReservation by mutableStateOf(false)
 
         fun onPlaceChange(newPlace: String){
             if (newPlace.isNotEmpty()) {
@@ -120,6 +127,22 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
 
         fun selectRoute(index: Int) {
             _selectedRouteIndex.value = index
+        }
+
+        fun increasePassengers() {
+            if(passengersNumber < 8){
+                passengersNumber++;
+            }
+        }
+
+        fun decreasePassengers() {
+            if(passengersNumber != 0){
+                passengersNumber--;
+            }
+        }
+
+        fun setReservationType(type: Boolean) {
+            automatedReservation = type;
         }
 
         fun decodePolyline(encoded: String): List<LatLng> {
