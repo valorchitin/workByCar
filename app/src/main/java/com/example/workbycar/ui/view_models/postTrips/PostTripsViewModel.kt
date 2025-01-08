@@ -21,7 +21,6 @@ import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.example.workbycar.domain.repository.DirectionsAPIService
-//import com.google.android.libraries.places.api.model.LocalTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,6 +61,9 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
 
         // Reservation Type
         var automatedReservation by mutableStateOf(false)
+
+        // Price
+        var price by mutableIntStateOf(0)
 
         fun onPlaceChange(newPlace: String){
             if (newPlace.isNotEmpty()) {
@@ -145,38 +147,21 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
             automatedReservation = type;
         }
 
-        fun decodePolyline(encoded: String): List<LatLng> {
-            val poly = ArrayList<LatLng>()
-            var index = 0
-            val len = encoded.length
-            var lat = 0
-            var lng = 0
+        fun calculatePrice() {
+            if (selectedRoute != null) {
+                val kilometers = (selectedRoute!!.legs.firstOrNull()?.distance?.value ?: 0) / 1000
 
-            while (index < len) {
-                var b: Int
-                var shift = 0
-                var result = 0
-                do {
-                    b = encoded[index++].code - 63
-                    result = result or (b and 0x1f shl shift)
-                    shift += 5
-                } while (b >= 0x20)
-                val dLat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-                lat += dLat
+                val min = (kilometers * 0.05)
+                val max = (kilometers * 0.08)
 
-                shift = 0
-                result = 0
-                do {
-                    b = encoded[index++].code - 63
-                    result = result or (b and 0x1f shl shift)
-                    shift += 5
-                } while (b >= 0x20)
-                val dLng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
-                lng += dLng
+                price = (((min + max) / 2) * dates.size).toInt()
 
-                poly.add(LatLng(lat / 1E5, lng / 1E5))
+                if (price < 1) {
+                    price = 1
+                }
+                else if (price > 120) {
+                    price = 120
+                }
             }
-
-            return poly
         }
 }

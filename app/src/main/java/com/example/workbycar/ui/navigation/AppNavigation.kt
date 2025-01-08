@@ -22,6 +22,9 @@ import com.example.workbycar.ui.views.post.DestinationInMapScreen
 import com.example.workbycar.ui.views.post.DestinationTripScreen
 import com.example.workbycar.ui.views.post.OriginInMapScreen
 import com.example.workbycar.ui.views.post.PassengersNumberScreen
+import com.example.workbycar.ui.views.post.PriceRecommendationScreen
+import com.example.workbycar.ui.views.post.PriceSelector
+import com.example.workbycar.ui.views.post.PriceSelectorScreen
 import com.example.workbycar.ui.views.post.ReservationTypeScreen
 import com.example.workbycar.ui.views.post.RouteSelectionScreen
 import com.example.workbycar.ui.views.post.StartTripScreen
@@ -90,6 +93,12 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
         }
         composable(AppScreens.ReservationTypeScreen.route) {
             ReservationTypeScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.PriceRecommendationScreen.route){
+            PriceRecommendationScreen(navController, postTripsViewModel)
+        }
+        composable(AppScreens.PriceSelectorScreen.route){
+            PriceSelectorScreen(navController, postTripsViewModel)
         }
         composable(AppScreens.MessagesScreen.route) {
             MessagesScreen(navController)

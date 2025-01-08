@@ -3,6 +3,7 @@ package com.example.workbycar.ui.views.post
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,10 +27,14 @@ import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReservationTypeScreen(navController: NavController, postTripsViewModel: PostTripsViewModel) {
+fun PriceRecommendationScreen(navController: NavController, postTripsViewModel: PostTripsViewModel) {
+    LaunchedEffect(Unit) {
+        postTripsViewModel.calculatePrice()
+    }
+
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "") },
@@ -42,29 +48,41 @@ fun ReservationTypeScreen(navController: NavController, postTripsViewModel: Post
         )
     }) { paddingValues ->
         Column(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(paddingValues),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "Do you want passengers to book the trip automatically?",
+                text = "This is our recommended price per seat for your trip. Do you agree?",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.headlineMedium
             )
-            ClickableText("Yes of course!", true, postTripsViewModel, navController);
-            ClickableText("No, I will manually respond to each request", false, postTripsViewModel, navController);
+            Text(
+                text = "${postTripsViewModel.price}.00 €",
+                modifier = Modifier.padding(horizontal = 16.dp),
+                style = MaterialTheme.typography.headlineLarge
+            )
+            ClickableText("Yes, perfect", true, navController, postTripsViewModel)
+            ClickableText("I don't agree", false, navController, postTripsViewModel)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClickableText(text: String, type: Boolean, postTripsViewModel: PostTripsViewModel, navController: NavController) {
+fun ClickableText(text: String, agree: Boolean, navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable {
-                postTripsViewModel.setReservationType(type);
-                navController.navigate(AppScreens.PriceRecommendationScreen.route)
+                if(agree){
+                    println("Route: ${postTripsViewModel.selectedRoute}")
+                    println("OK")
+                } else {
+                    navController.navigate(AppScreens.PriceSelectorScreen.route)
+                }
             },
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -24,13 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PassengersNumberScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
+fun PriceSelectorScreen(navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "") },
@@ -43,24 +42,27 @@ fun PassengersNumberScreen(navController: NavController, postTripsViewModel: Pos
             }
         )
     }) { paddingValues ->
-        Box (
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(paddingValues),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
-            ){
-                Text(text = "How many passengers are you going to take on the trip? Consider passenger comfort",
+            ) {
+                Text(
+                    text = "Edit the amount. Please note that an excessive price may be unattractive",
                     modifier = Modifier.padding(horizontal = 16.dp),
                     style = MaterialTheme.typography.headlineMedium
                 )
-                PassengersSelector(postTripsViewModel)
+                PriceSelector(postTripsViewModel)
             }
             Button(
                 onClick = {
-                    navController.navigate(AppScreens.ReservationTypeScreen.route)
+                    println("OK")
                 },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -74,25 +76,29 @@ fun PassengersNumberScreen(navController: NavController, postTripsViewModel: Pos
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PassengersSelector(postTripsViewModel: PostTripsViewModel){
+fun PriceSelector(postTripsViewModel: PostTripsViewModel) {
     Row (
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth()
     ) {
         Button(
             onClick = {
-                postTripsViewModel.decreasePassengers();
+                if (postTripsViewModel.price > 1) {
+                    postTripsViewModel.price--
+                }
             }
         ) {
             Text(text = "-")
         }
-        Text(text = "${postTripsViewModel.passengersNumber}" ,
+        Text(text = "${postTripsViewModel.price}.00 €" ,
             modifier = Modifier.padding(horizontal = 16.dp),
             style = MaterialTheme.typography.headlineMedium
         )
         Button(
             onClick = {
-                postTripsViewModel.increasePassengers();
+                if (postTripsViewModel.price < 120) {
+                    postTripsViewModel.price++
+                }
             }
         ) {
             Text(text = "+")
