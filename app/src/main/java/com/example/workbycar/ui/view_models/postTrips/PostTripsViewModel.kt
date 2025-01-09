@@ -15,12 +15,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workbycar.data.ApiKeyProvider
 import com.example.workbycar.domain.model.Route
+import com.example.workbycar.domain.model.Trip
 import com.example.workbycar.domain.repository.AuthRepository
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.example.workbycar.domain.repository.DirectionsAPIService
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -163,5 +165,29 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
                     price = 120
                 }
             }
+        }
+
+        fun postTrip() {
+            val trip = Trip(
+                uid = "",
+                origin = origin,
+                destination = destination,
+                origincoordinates = origincoordinates,
+                destinationcoordinates = destinationcoordinates,
+                route = selectedRoute,
+                dates = dates.map { date -> date.toString() },
+                departureHour = departureHour.toString(),
+                passengersNumber = passengersNumber,
+                automatedReservation = automatedReservation,
+                price = price,
+            )
+
+            FirebaseFirestore.getInstance().collection("trips").add(trip)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "Trip added successfully!")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error adding trip", e)
+                }
         }
 }

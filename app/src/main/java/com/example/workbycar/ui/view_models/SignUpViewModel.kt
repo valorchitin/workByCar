@@ -29,7 +29,8 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
 
     fun signUp(authResult: (Boolean) -> Unit) {
         viewModelScope.launch {
-            authRepository.createUserWithEmailAndPassword(email,
+            authRepository.createUserWithEmailAndPassword(
+                email,
                 password,
                 name,
                 surname,

@@ -78,8 +78,7 @@ fun ClickableText(text: String, agree: Boolean, navController: NavController, po
             .padding(8.dp)
             .clickable {
                 if(agree){
-                    println("Route: ${postTripsViewModel.selectedRoute}")
-                    println("OK")
+                    navController.navigate(AppScreens.TripPostingScreen.route)
                 } else {
                     navController.navigate(AppScreens.PriceSelectorScreen.route)
                 }

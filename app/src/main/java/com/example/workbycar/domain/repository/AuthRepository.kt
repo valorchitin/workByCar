@@ -1,5 +1,6 @@
 package com.example.workbycar.domain.repository
 
+import com.example.workbycar.domain.model.Trip
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.utils.CallBackHandle
 
@@ -12,4 +13,5 @@ interface AuthRepository {
     fun logout(callBack: CallBackHandle<Boolean>)
 
     suspend fun createUserWithEmailAndPassword(email: String, password: String, name: String, surname: String, birthDate: Long?, prefix: String, phone: String, callBack: CallBackHandle<Boolean>)
+
 }
