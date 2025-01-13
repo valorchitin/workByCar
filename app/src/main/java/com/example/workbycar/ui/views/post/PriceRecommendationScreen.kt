@@ -63,15 +63,15 @@ fun PriceRecommendationScreen(navController: NavController, postTripsViewModel: 
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.headlineLarge
             )
-            ClickableText("Yes, perfect", true, navController, postTripsViewModel)
-            ClickableText("I don't agree", false, navController, postTripsViewModel)
+            ClickableText("Yes, perfect", true, navController)
+            ClickableText("I don't agree", false, navController)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClickableText(text: String, agree: Boolean, navController: NavController, postTripsViewModel: PostTripsViewModel) {
+fun ClickableText(text: String, agree: Boolean, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

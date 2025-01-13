@@ -87,7 +87,7 @@ fun OriginTextView(navController: NavController, postTripsViewModel: PostTripsVi
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
-            items(postTripsViewModel.predictions) { (predictionText, placeId) ->
+            items(postTripsViewModel.predictions) { (predictionText, _) ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

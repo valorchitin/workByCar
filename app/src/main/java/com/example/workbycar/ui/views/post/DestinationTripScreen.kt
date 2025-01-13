@@ -1,5 +1,7 @@
 package com.example.workbycar.ui.views.post
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DestinationTripScreen(navController: NavController, postTripsViewModel: PostTripsViewModel) {
@@ -49,6 +52,7 @@ fun DestinationTripScreen(navController: NavController, postTripsViewModel: Post
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DestinationTripContent(navController: NavController, modifier: Modifier = Modifier, postTripsViewModel: PostTripsViewModel){
     Column(
@@ -61,6 +65,7 @@ fun DestinationTripContent(navController: NavController, modifier: Modifier = Mo
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DestinationTextView(navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Column(
@@ -82,7 +87,7 @@ fun DestinationTextView(navController: NavController, postTripsViewModel: PostTr
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
-            items(postTripsViewModel.predictions) { (predictionText, placeId) ->
+            items(postTripsViewModel.predictions) { (predictionText, _) ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

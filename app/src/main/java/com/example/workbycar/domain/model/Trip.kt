@@ -16,4 +16,5 @@ data class Trip(
     val passengersNumber: Int,
     val automatedReservation: Boolean,
     val price: Int,
+    val description: String,
 )

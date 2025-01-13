@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.SignUpViewModel
-import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -34,15 +33,12 @@ import java.util.Locale
 fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel){
     val context = LocalContext.current
 
-    var isSignUpSucces by remember { mutableStateOf(false) }
-
     LazyColumn (modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        //if (!isSignUpSucces) {
         item {
             EmailTextViewForSignUp(signUpViewModel)
         }
@@ -59,19 +55,8 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel)
             BirthDateButton(signUpViewModel)
         }
         item {
-            ButtonSignUp(signUpViewModel, context, navController)//{ signUpSuccesful ->
-                //isSignUpSucces = signUpSuccesful
-            //}
+            ButtonSignUp(signUpViewModel, context, navController)
         }
-        //} else {
-        //    item {
-        //        Text("Message sent.")
-        //        Text("Please verify your email address through mail")
-        //    }
-        //    item {
-        //        ContinueButton(navController, context)
-        //    }
-        //}
     }
 }
 

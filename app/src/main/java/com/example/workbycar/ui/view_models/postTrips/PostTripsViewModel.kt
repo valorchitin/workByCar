@@ -16,12 +16,15 @@ import androidx.lifecycle.viewModelScope
 import com.example.workbycar.data.ApiKeyProvider
 import com.example.workbycar.domain.model.Route
 import com.example.workbycar.domain.model.Trip
+import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.example.workbycar.domain.repository.DirectionsAPIService
+import com.example.workbycar.utils.CallBackHandle
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +42,7 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
                                              private val directionsAPIService: DirectionsAPIService,
                                              private val apiKeyProvider: ApiKeyProvider): ViewModel() {
         private var sessionToken = AutocompleteSessionToken.newInstance()
+        private var auth: FirebaseAuth = FirebaseAuth.getInstance()
         var origin by mutableStateOf("")
         var destination by mutableStateOf("")
         var origincoordinates by mutableStateOf(LatLng(0.0, 0.0))
@@ -66,6 +70,9 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
 
         // Price
         var price by mutableIntStateOf(0)
+
+        // Description
+        var description by mutableStateOf("")
 
         fun onPlaceChange(newPlace: String){
             if (newPlace.isNotEmpty()) {
@@ -168,26 +175,52 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
         }
 
         fun postTrip() {
-            val trip = Trip(
-                uid = "",
-                origin = origin,
-                destination = destination,
-                origincoordinates = origincoordinates,
-                destinationcoordinates = destinationcoordinates,
-                route = selectedRoute,
-                dates = dates.map { date -> date.toString() },
-                departureHour = departureHour.toString(),
-                passengersNumber = passengersNumber,
-                automatedReservation = automatedReservation,
-                price = price,
-            )
+            viewModelScope.launch {
+                authRepository.getCurrentUser(CallBackHandle(
+                    onSuccess = {user ->
+                        val trip = Trip(
+                            uid = user.uid,
+                            origin = origin,
+                            destination = destination,
+                            origincoordinates = origincoordinates,
+                            destinationcoordinates = destinationcoordinates,
+                            route = selectedRoute,
+                            dates = dates.map { date -> date.toString() },
+                            departureHour = departureHour.toString(),
+                            passengersNumber = passengersNumber,
+                            automatedReservation = automatedReservation,
+                            price = price,
+                            description = description,
+                        )
 
-            FirebaseFirestore.getInstance().collection("trips").add(trip)
-                .addOnSuccessListener {
-                    Log.d("Firestore", "Trip added successfully!")
-                }
-                .addOnFailureListener { e ->
-                    Log.e("Firestore", "Error adding trip", e)
-                }
+                        FirebaseFirestore.getInstance().collection("trips").add(trip)
+                            .addOnSuccessListener {
+                                Log.d("Firestore", "Trip added successfully!")
+                                reset()
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e("Firestore", "Error adding trip", e)
+                            }
+                    },
+                    onError = {
+                        Log.e("SignUpViewModel", "Error al obtener el usario actual.")
+                    }
+                ))
+            }
+        }
+
+        private fun reset() {
+            origin = ""
+            destination = ""
+            origincoordinates = LatLng(0.0, 0.0)
+            destinationcoordinates = LatLng(0.0, 0.0)
+            predictions = emptyList()
+            selectedRoute = null
+            dates = emptySet()
+            departureHour = LocalTime.now()
+            passengersNumber = 3
+            automatedReservation = false
+            price = 0
+            description = ""
         }
 }
