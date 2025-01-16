@@ -16,7 +16,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.workbycar.data.ApiKeyProvider
 import com.example.workbycar.domain.model.Route
 import com.example.workbycar.domain.model.Trip
-import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken

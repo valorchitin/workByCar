@@ -11,6 +11,7 @@ import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
+import com.example.workbycar.ui.view_models.userTrips.UserTripsViewModel
 import com.example.workbycar.ui.views.LogInScreen
 import com.example.workbycar.ui.views.MainScreen
 import com.example.workbycar.ui.views.sign_up.SignUpScreen
@@ -38,7 +39,11 @@ import com.google.android.libraries.places.api.net.PlacesClient
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewModel, profileViewModel: ProfileViewModel, postTripsViewModel: PostTripsViewModel) {
+fun AppNavigation(loginViewModel: LoginViewModel,
+                  signUpViewModel: SignUpViewModel,
+                  profileViewModel: ProfileViewModel,
+                  postTripsViewModel: PostTripsViewModel,
+                  userTripsViewModel: UserTripsViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -61,7 +66,7 @@ fun AppNavigation(loginViewModel: LoginViewModel, signUpViewModel: SignUpViewMod
             MainScreen(navController)
         }
         composable(AppScreens.TripsScreen.route) {
-            TripsScreen(navController)
+            TripsScreen(navController, userTripsViewModel)
         }
         composable(AppScreens.ProfileScreen.route) {
             ProfileScreen(navController, profileViewModel)
