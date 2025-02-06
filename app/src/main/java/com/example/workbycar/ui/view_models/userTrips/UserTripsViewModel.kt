@@ -79,6 +79,8 @@ class UserTripsViewModel @Inject constructor(private val authRepository: AuthRep
                                         route = route,
                                         automatedReservation = trip.getBoolean("automatedReservation") ?: false,
                                         dates = trip["dates"] as? List<String> ?: emptyList(),
+                                        startOfWeek = trip.getString("startOfWeek") ?: "",
+                                        endOfWeek = trip.getString("endOfWeek") ?: "",
                                     )
 
                                     tripObject

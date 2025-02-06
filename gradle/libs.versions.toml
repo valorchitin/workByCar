@@ -18,6 +18,7 @@ composeBom = "2024.09.03"
 loggingInterceptor = "4.11.0"
 mapsCompose = "2.11.0"
 material3 = "1.3.0"
+materialIconsExtended = "1.7.6"
 navigationCompose = "2.8.2"
 google-services = "4.4.2"
 firebaseAuthKtx = "23.0.0"
@@ -32,6 +33,7 @@ runtimeLivedata = "1.7.5"
 [libraries]
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "androidMapsUtils" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }

@@ -1,7 +1,6 @@
 package com.example.workbycar.ui.views.post
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -71,6 +70,7 @@ fun DateSelectionScreen(navController: NavController, postTripsViewModel: PostTr
                 Button(
                     onClick = {
                         navController.navigate(AppScreens.DepartureTimeSelectionScreen.route)
+                        println("start: ${postTripsViewModel.startOfWeek} - end: ${postTripsViewModel.endOfWeek}")
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -87,6 +87,7 @@ fun DateSelectionScreen(navController: NavController, postTripsViewModel: PostTr
 @Composable
 fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
     val currentMonth = remember { mutableStateOf(YearMonth.now()) }
+    val firstSelectedDate = remember { mutableStateOf<LocalDate?>(null) }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -146,6 +147,14 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
                             val date = LocalDate.of(currentMonth.value.year, currentMonth.value.month, dayOfMonth)
                             val isSelected = postTripsViewModel.dates.contains(date)
 
+                            val isWithinAllowedRange = firstSelectedDate.value?.let { selectedDate ->
+                                val startOfWeek = selectedDate.minusDays(selectedDate.dayOfWeek.value.toLong() - 1)
+                                val endOfWeek = startOfWeek.plusDays(6)
+                                postTripsViewModel.startOfWeek = startOfWeek
+                                postTripsViewModel.endOfWeek = endOfWeek
+                                date in startOfWeek..endOfWeek
+                            } ?: true
+
                             Box(
                                 modifier = Modifier
                                     .size(40.dp)
@@ -153,15 +162,24 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
                                         if (isSelected) Color.Blue else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .clickable {
-                                        val updatedDates = postTripsViewModel.dates.toMutableSet()
-                                        if (isSelected) {
-                                            updatedDates.remove(date)
-                                        } else {
-                                            updatedDates.add(date)
+                                    .clickable(
+                                        enabled = isWithinAllowedRange,
+                                        onClick = {
+                                            val updatedDates = postTripsViewModel.dates.toMutableSet()
+                                            if (isSelected) {
+                                                updatedDates.remove(date)
+                                                if (updatedDates.isEmpty()) {
+                                                    firstSelectedDate.value = null
+                                                }
+                                            } else {
+                                                updatedDates.add(date)
+                                                if (firstSelectedDate.value == null) {
+                                                    firstSelectedDate.value = date
+                                                }
+                                            }
+                                            postTripsViewModel.dates = updatedDates
                                         }
-                                        postTripsViewModel.dates = updatedDates
-                                    },
+                                    ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(

@@ -17,6 +17,7 @@ import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
+import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import com.example.workbycar.ui.view_models.userTrips.UserTripsViewModel
 import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,13 +33,14 @@ class MainActivity : ComponentActivity() {
         val profileViewModel: ProfileViewModel by viewModels()
         val postTripsViewModel: PostTripsViewModel by viewModels()
         val userTripsViewModel: UserTripsViewModel by viewModels()
+        val searcherViewModel: SearcherViewModel by viewModels()
         super.onCreate(savedInstanceState)
         Places.initialize(this, getString(R.string.google_maps_api_key))
         enableEdgeToEdge()
         setContent {
             WorkByCarTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(loginViewModel, signUpViewModel, profileViewModel, postTripsViewModel, userTripsViewModel)
+                    AppNavigation(loginViewModel, signUpViewModel, profileViewModel, postTripsViewModel, userTripsViewModel, searcherViewModel)
                 }
             }
         }

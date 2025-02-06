@@ -11,6 +11,7 @@ import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
+import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import com.example.workbycar.ui.view_models.userTrips.UserTripsViewModel
 import com.example.workbycar.ui.views.LogInScreen
 import com.example.workbycar.ui.views.MainScreen
@@ -33,6 +34,8 @@ import com.example.workbycar.ui.views.post.StartTripScreen
 import com.example.workbycar.ui.views.post.TripPostingScreen
 import com.example.workbycar.ui.views.profile.EditUserInfoScreen
 import com.example.workbycar.ui.views.profile.ProfileScreen
+import com.example.workbycar.ui.views.searcher.PlaceSelectorScreen
+import com.example.workbycar.ui.views.searcher.WeekSelectorScreen
 import com.example.workbycar.ui.views.sign_up.AddPhoneScreen
 import com.example.workbycar.ui.views.trips.TripsScreen
 import com.google.android.libraries.places.api.net.PlacesClient
@@ -43,7 +46,8 @@ fun AppNavigation(loginViewModel: LoginViewModel,
                   signUpViewModel: SignUpViewModel,
                   profileViewModel: ProfileViewModel,
                   postTripsViewModel: PostTripsViewModel,
-                  userTripsViewModel: UserTripsViewModel) {
+                  userTripsViewModel: UserTripsViewModel,
+                  searcherViewModel: SearcherViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -63,7 +67,13 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             AddPhoneScreen(navController, signUpViewModel)
         }
         composable(AppScreens.MainScreen.route){
-            MainScreen(navController)
+            MainScreen(navController, searcherViewModel)
+        }
+        composable(AppScreens.PlaceSelectorScreen.route){
+            PlaceSelectorScreen(navController, searcherViewModel)
+        }
+        composable(AppScreens.WeekSelectorScreen.route){
+            WeekSelectorScreen(navController, searcherViewModel)
         }
         composable(AppScreens.TripsScreen.route) {
             TripsScreen(navController, userTripsViewModel)

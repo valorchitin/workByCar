@@ -12,6 +12,8 @@ data class Trip(
     val destinationcoordinates: LatLng,
     val route: Route?,
     val dates: List<String>,
+    val startOfWeek: String,
+    val endOfWeek: String,
     val departureHour: String,
     val passengersNumber: Int,
     val automatedReservation: Boolean,

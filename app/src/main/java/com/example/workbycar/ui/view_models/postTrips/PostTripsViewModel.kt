@@ -40,6 +40,7 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
                                              private val geocoder: Geocoder,
                                              private val directionsAPIService: DirectionsAPIService,
                                              private val apiKeyProvider: ApiKeyProvider): ViewModel() {
+
         private var sessionToken = AutocompleteSessionToken.newInstance()
         private var auth: FirebaseAuth = FirebaseAuth.getInstance()
         var origin by mutableStateOf("")
@@ -57,6 +58,8 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
 
         // Dates
         var dates by mutableStateOf(setOf<LocalDate>())
+        var startOfWeek by mutableStateOf<LocalDate?>(null)
+        var endOfWeek by mutableStateOf<LocalDate?>(null)
 
         // Departure hour
         var departureHour by mutableStateOf(LocalTime.now())
@@ -185,6 +188,8 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
                             destinationcoordinates = destinationcoordinates,
                             route = selectedRoute,
                             dates = dates.map { date -> date.toString() },
+                            startOfWeek = startOfWeek.toString(),
+                            endOfWeek = endOfWeek.toString(),
                             departureHour = departureHour.toString(),
                             passengersNumber = passengersNumber,
                             automatedReservation = automatedReservation,
@@ -216,6 +221,8 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
             predictions = emptyList()
             selectedRoute = null
             dates = emptySet()
+            startOfWeek = null
+            endOfWeek = null
             departureHour = LocalTime.now()
             passengersNumber = 3
             automatedReservation = false

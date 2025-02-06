@@ -1,6 +1,8 @@
 package com.example.workbycar.ui.views.post
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +30,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OriginInMapScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
@@ -57,6 +60,7 @@ fun OriginInMapScreen(navController: NavController, postTripsViewModel: PostTrip
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SelectOriginMap(
     navController: NavController,
@@ -86,6 +90,7 @@ fun SelectOriginMap(
             onClick = {
                 onLocationSelected(postTripsViewModel.origincoordinates)
                 navController.navigate(AppScreens.DestinationTripScreen.route)
+                postTripsViewModel.predictions = emptyList()
                       },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
