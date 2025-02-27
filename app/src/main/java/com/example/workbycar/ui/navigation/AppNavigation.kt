@@ -7,6 +7,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
@@ -25,7 +26,6 @@ import com.example.workbycar.ui.views.post.DestinationTripScreen
 import com.example.workbycar.ui.views.post.OriginInMapScreen
 import com.example.workbycar.ui.views.post.PassengersNumberScreen
 import com.example.workbycar.ui.views.post.PriceRecommendationScreen
-import com.example.workbycar.ui.views.post.PriceSelector
 import com.example.workbycar.ui.views.post.PriceSelectorScreen
 import com.example.workbycar.ui.views.post.PublicationConfirmationScreen
 import com.example.workbycar.ui.views.post.ReservationTypeScreen
@@ -34,11 +34,12 @@ import com.example.workbycar.ui.views.post.StartTripScreen
 import com.example.workbycar.ui.views.post.TripPostingScreen
 import com.example.workbycar.ui.views.profile.EditUserInfoScreen
 import com.example.workbycar.ui.views.profile.ProfileScreen
+import com.example.workbycar.ui.views.searcher.FoundTripsScreen
 import com.example.workbycar.ui.views.searcher.PlaceSelectorScreen
+import com.example.workbycar.ui.views.searcher.TripInformationScreen
 import com.example.workbycar.ui.views.searcher.WeekSelectorScreen
 import com.example.workbycar.ui.views.sign_up.AddPhoneScreen
 import com.example.workbycar.ui.views.trips.TripsScreen
-import com.google.android.libraries.places.api.net.PlacesClient
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -75,11 +76,17 @@ fun AppNavigation(loginViewModel: LoginViewModel,
         composable(AppScreens.WeekSelectorScreen.route){
             WeekSelectorScreen(navController, searcherViewModel)
         }
+        composable(AppScreens.FoundTripsScreen.route){
+            FoundTripsScreen(navController, searcherViewModel)
+        }
+        composable(AppScreens.TripInformationScreen.route){
+            TripInformationScreen(navController, searcherViewModel)
+        }
         composable(AppScreens.TripsScreen.route) {
-            TripsScreen(navController, userTripsViewModel)
+            TripsScreen(navController, userTripsViewModel, searcherViewModel)
         }
         composable(AppScreens.ProfileScreen.route) {
-            ProfileScreen(navController, profileViewModel)
+            ProfileScreen(navController, profileViewModel, searcherViewModel)
         }
         composable(AppScreens.EditUserInfoScreen.route) {
             EditUserInfoScreen(navController, profileViewModel)
@@ -124,7 +131,7 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             PublicationConfirmationScreen(navController)
         }
         composable(AppScreens.MessagesScreen.route) {
-            MessagesScreen(navController)
+            MessagesScreen(navController, searcherViewModel)
         }
     }
 }

@@ -86,6 +86,7 @@ fun PlaceTextView(modifier: Modifier, navController: NavController, searcherView
                                 searcherViewModel.searcherDestination = predictionText
                                 searcherViewModel.getCoordinates(searcherViewModel.searcherDestination, 1)
                             }
+                            searcherViewModel.searcherPredictions = emptyList()
                             navController.navigate(AppScreens.MainScreen.route)
                         },
                     verticalAlignment = Alignment.CenterVertically

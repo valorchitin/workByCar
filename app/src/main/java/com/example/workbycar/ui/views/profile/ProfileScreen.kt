@@ -1,6 +1,5 @@
 package com.example.workbycar.ui.views.profile
 
-import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
+import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import com.example.workbycar.ui.views.ButtonsMainScreen
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,7 +35,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel){
+fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewModel, searcherViewModel: SearcherViewModel){
     LaunchedEffect(Unit) {
         profileViewModel.userInfo()
     }
@@ -53,7 +53,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
         LazyColumn (
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Aquí aplicamos paddingValues
+                .padding(paddingValues)
                 .padding(16.dp)
         ) {
             item {
@@ -78,7 +78,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Bottom
         ){
-            ButtonsMainScreen(navController = navController)
+            ButtonsMainScreen(navController = navController, searcherViewModel)
         }
     }
 }

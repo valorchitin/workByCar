@@ -8,10 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import com.example.workbycar.ui.views.ButtonsMainScreen
 
 @Composable
-fun MessagesScreen(navController: NavController){
+fun MessagesScreen(navController: NavController, searcherViewModel: SearcherViewModel){
     Column (
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -19,6 +20,6 @@ fun MessagesScreen(navController: NavController){
     ) {
         Text("Messages Screen")
         //Spacer(modifier = Modifier.weight(1f))
-        ButtonsMainScreen(navController = navController)
+        ButtonsMainScreen(navController = navController, searcherViewModel = searcherViewModel)
     }
 }

@@ -70,7 +70,6 @@ fun DateSelectionScreen(navController: NavController, postTripsViewModel: PostTr
                 Button(
                     onClick = {
                         navController.navigate(AppScreens.DepartureTimeSelectionScreen.route)
-                        println("start: ${postTripsViewModel.startOfWeek} - end: ${postTripsViewModel.endOfWeek}")
                     },
                     modifier = Modifier
                         .align(Alignment.BottomCenter)

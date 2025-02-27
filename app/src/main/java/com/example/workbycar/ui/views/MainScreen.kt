@@ -27,10 +27,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,7 +56,7 @@ fun MainScreen(navController: NavController, searcherViewModel: SearcherViewMode
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ButtonsMainScreen(navController = navController)
+                ButtonsMainScreen(navController = navController, searcherViewModel = searcherViewModel)
             }
         }) { paddingValues ->
         Searcher(Modifier.padding(paddingValues), searcherViewModel, navController)
@@ -68,7 +64,7 @@ fun MainScreen(navController: NavController, searcherViewModel: SearcherViewMode
 }
 
 @Composable
-fun ButtonsMainScreen(navController: NavController){
+fun ButtonsMainScreen(navController: NavController, searcherViewModel: SearcherViewModel){
     Row (modifier = Modifier
         .fillMaxWidth()
         .height(60.dp)
@@ -77,33 +73,39 @@ fun ButtonsMainScreen(navController: NavController){
             imageDescription = "Buscar",
             modifier = Modifier.weight(1f).fillMaxHeight(),
             route = AppScreens.MainScreen.route,
-            navController = navController)
+            navController = navController,
+            searcherViewModel = searcherViewModel)
         ButtonMain(image = R.drawable.agregar,
             imageDescription = "Publicar",
             modifier = Modifier.weight(1f).fillMaxHeight(),
             route = AppScreens.StartTripScreen.route,
-            navController = navController)
+            navController = navController,
+            searcherViewModel = searcherViewModel)
         ButtonMain(image = R.drawable.viaje_en_coche,
             imageDescription = "Tus viajes",
             modifier = Modifier.weight(1f).fillMaxHeight(),
             route = AppScreens.TripsScreen.route,
-            navController = navController)
+            navController = navController,
+            searcherViewModel = searcherViewModel)
         ButtonMain(image = R.drawable.puntos_de_comentario,
             imageDescription = "Mensajes",
             modifier = Modifier.weight(1f).fillMaxHeight(),
             route = AppScreens.MessagesScreen.route,
-            navController = navController)
+            navController = navController,
+            searcherViewModel = searcherViewModel)
         ButtonMain(image = R.drawable.usuario,
             imageDescription = "Perfil",
             modifier = Modifier.weight(1f).fillMaxHeight(),
             route = AppScreens.ProfileScreen.route,
-            navController = navController)
+            navController = navController,
+            searcherViewModel = searcherViewModel)
     }
 }
 
 @Composable
-fun ButtonMain(image: Int, imageDescription: String, modifier: Modifier, route: String, navController: NavController){
+fun ButtonMain(image: Int, imageDescription: String, modifier: Modifier, route: String, navController: NavController, searcherViewModel: SearcherViewModel){
     FilledTonalButton(onClick = {
+            searcherViewModel.resetSearcher()
             navController.navigate(route = route)
         },
         shape = CutCornerShape(0),
@@ -117,8 +119,6 @@ fun ButtonMain(image: Int, imageDescription: String, modifier: Modifier, route: 
 
 @Composable
 fun Searcher(modifier: Modifier, searcherViewModel: SearcherViewModel, navController: NavController){
-    var selectedDate by remember { mutableStateOf("Selecciona una semana") }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -189,7 +189,11 @@ fun Searcher(modifier: Modifier, searcherViewModel: SearcherViewModel, navContro
                 )
 
                 OutlinedTextField(
-                    value = selectedDate,
+                    value = if (searcherViewModel.searcherStartOfWeek != null && searcherViewModel.searcherEndOfWeek != null){
+                                "From ${searcherViewModel.searcherStartOfWeek} to ${searcherViewModel.searcherEndOfWeek}"
+                            } else {
+                                ""
+                            },
                     onValueChange = {},
                     label = { Text("Semana") },
                     modifier = Modifier
@@ -218,7 +222,8 @@ fun Searcher(modifier: Modifier, searcherViewModel: SearcherViewModel, navContro
 
                 Button(
                     onClick = {
-                        // Logic to handle the search action
+                        searcherViewModel.search()
+                        navController.navigate(AppScreens.FoundTripsScreen.route)
                     },
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
