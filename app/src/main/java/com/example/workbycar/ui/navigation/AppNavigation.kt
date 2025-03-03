@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -35,6 +36,7 @@ import com.example.workbycar.ui.views.post.TripPostingScreen
 import com.example.workbycar.ui.views.profile.EditUserInfoScreen
 import com.example.workbycar.ui.views.profile.ProfileScreen
 import com.example.workbycar.ui.views.searcher.FoundTripsScreen
+import com.example.workbycar.ui.views.searcher.MapScreen
 import com.example.workbycar.ui.views.searcher.PlaceSelectorScreen
 import com.example.workbycar.ui.views.searcher.TripInformationScreen
 import com.example.workbycar.ui.views.searcher.WeekSelectorScreen
@@ -81,6 +83,13 @@ fun AppNavigation(loginViewModel: LoginViewModel,
         }
         composable(AppScreens.TripInformationScreen.route){
             TripInformationScreen(navController, searcherViewModel)
+        }
+        composable(
+            route = "${AppScreens.MapScreen.route}/{isEditable}",
+            arguments = listOf(navArgument("isEditable") { type = NavType.BoolType })
+        ) { backStackEntry ->
+            val isEditable = backStackEntry.arguments?.getBoolean("isEditable") ?: false
+            MapScreen(navController, searcherViewModel, isEditable)
         }
         composable(AppScreens.TripsScreen.route) {
             TripsScreen(navController, userTripsViewModel, searcherViewModel)

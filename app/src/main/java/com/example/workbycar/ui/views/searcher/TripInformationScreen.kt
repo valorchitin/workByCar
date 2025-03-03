@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.outlined.ChatBubble
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -66,7 +68,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
             modifier = Modifier.padding(paddingValues)
         ){
             item {
-                FirstSection(searcherViewModel)
+                FirstSection(navController, searcherViewModel)
             }
             item {
                 HorizontalDivider(
@@ -94,7 +96,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun FirstSection(searcherViewModel: SearcherViewModel){
+fun FirstSection(navController: NavController, searcherViewModel: SearcherViewModel){
     val trip = searcherViewModel.selectedTrip!!
 
     val formatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -115,28 +117,58 @@ fun FirstSection(searcherViewModel: SearcherViewModel){
             textAlign = TextAlign.Start)
     }
     Spacer(modifier = Modifier.height(16.dp))
-    Text(
-        text = buildAnnotatedString {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                append("Departure: ")
-            }
-            append("${searcherViewModel.selectedTrip!!.origin} - ${searcherViewModel.selectedTrip!!.departureHour}")
-        },
-        modifier = Modifier.padding(horizontal = 16.dp),
-        fontSize = 20.sp,
-        textAlign = TextAlign.Start
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable {
+                navController.navigate("${AppScreens.MapScreen.route}/true")
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Departure: ")
+                }
+                append("${searcherViewModel.selectedTrip!!.origin} - ${searcherViewModel.selectedTrip!!.departureHour}")
+            },
+            fontSize = 20.sp,
+            modifier = Modifier.weight(1f, false),
+            textAlign = TextAlign.Start
         )
-    Text(
-        text = buildAnnotatedString {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                append("Destination: ")
-            }
-            append("${searcherViewModel.selectedTrip!!.destination} - $formattedArrivalTime")
-        },
-        modifier = Modifier.padding(horizontal = 16.dp),
-        fontSize = 20.sp,
-        textAlign = TextAlign.Start
-    )
+        Icon(
+            imageVector = Icons.Filled.Map,
+            contentDescription = "Select location",
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .clickable {
+                navController.navigate("${AppScreens.MapScreen.route}/false")
+            },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("Destination: ")
+                }
+                append("${searcherViewModel.selectedTrip!!.destination} - $formattedArrivalTime")
+            },
+            fontSize = 20.sp,
+            modifier = Modifier.weight(1f, false),
+            textAlign = TextAlign.Start
+        )
+        Icon(
+            imageVector = Icons.Filled.Map,
+            contentDescription = "Select location",
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
 }
 
 @SuppressLint("DefaultLocale")

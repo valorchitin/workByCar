@@ -22,7 +22,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -36,9 +35,6 @@ import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 @Composable
 fun FoundTripsScreen(navController: NavController, searcherViewModel: SearcherViewModel) {
     val trips by searcherViewModel.trips.observeAsState(emptyList())
-    LaunchedEffect (Unit){
-        searcherViewModel.selectedTrip = null
-    }
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "Found Trips") },
