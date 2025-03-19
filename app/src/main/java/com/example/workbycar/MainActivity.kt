@@ -11,10 +11,12 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.workbycar.ui.navigation.AppNavigation
 import com.example.workbycar.ui.theme.WorkByCarTheme
 import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import com.example.workbycar.ui.view_models.chats.ChatsViewModel
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
@@ -34,13 +36,21 @@ class MainActivity : ComponentActivity() {
         val postTripsViewModel: PostTripsViewModel by viewModels()
         val userTripsViewModel: UserTripsViewModel by viewModels()
         val searcherViewModel: SearcherViewModel by viewModels()
+        val chatsViewModel: ChatsViewModel by viewModels()
         super.onCreate(savedInstanceState)
         Places.initialize(this, getString(R.string.google_maps_api_key))
         enableEdgeToEdge()
         setContent {
             WorkByCarTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {
-                    AppNavigation(loginViewModel, signUpViewModel, profileViewModel, postTripsViewModel, userTripsViewModel, searcherViewModel)
+                    AppNavigation(
+                        loginViewModel,
+                        signUpViewModel,
+                        profileViewModel,
+                        postTripsViewModel,
+                        userTripsViewModel,
+                        searcherViewModel,
+                        chatsViewModel)
                 }
             }
         }

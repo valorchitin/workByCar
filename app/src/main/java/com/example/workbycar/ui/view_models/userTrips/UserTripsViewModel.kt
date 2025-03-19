@@ -67,6 +67,7 @@ class UserTripsViewModel @Inject constructor(private val authRepository: AuthRep
                                         )
                                     }
                                     val tripObject = Trip(
+                                        tripId = trip.id,
                                         uid = trip.getString("uid") ?: "",
                                         description = trip.getString("description") ?: "",
                                         departureHour = trip.getString("departureHour") ?: "",
@@ -81,6 +82,7 @@ class UserTripsViewModel @Inject constructor(private val authRepository: AuthRep
                                         dates = trip["dates"] as? List<String> ?: emptyList(),
                                         startOfWeek = trip.getString("startOfWeek") ?: "",
                                         endOfWeek = trip.getString("endOfWeek") ?: "",
+                                        passengers = trip["passengers"] as? List<String> ?: emptyList()
                                     )
 
                                     tripObject

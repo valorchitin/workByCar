@@ -195,6 +195,7 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
                             automatedReservation = automatedReservation,
                             price = price,
                             description = description,
+                            passengers = emptyList(),
                         )
 
                         FirebaseFirestore.getInstance().collection("trips").add(trip)
