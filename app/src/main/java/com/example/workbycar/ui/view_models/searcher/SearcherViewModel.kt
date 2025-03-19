@@ -18,6 +18,7 @@ import com.example.workbycar.domain.model.TextValue
 import com.example.workbycar.domain.model.Trip
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
+import com.example.workbycar.utils.CallBackHandle
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -52,8 +53,11 @@ class SearcherViewModel @Inject constructor(
     val trips: LiveData<List<Trip>> = _filteredTrips
 
     var selectedTrip by mutableStateOf<Trip?>(null)
+    private var tripId by mutableStateOf("")
 
     var driver by mutableStateOf<UserLogged?>(null)
+
+    var userId by mutableStateOf("")
 
     fun onPlaceChange(newPlace: String){
         if (newPlace.isNotEmpty()) {
@@ -146,6 +150,7 @@ class SearcherViewModel @Inject constructor(
                         }
 
                         val tripObject = Trip(
+                            tripId = trip.id,
                             uid = trip.getString("uid") ?: "",
                             description = trip.getString("description") ?: "",
                             departureHour = trip.getString("departureHour") ?: "",
@@ -160,6 +165,7 @@ class SearcherViewModel @Inject constructor(
                             dates = trip["dates"] as? List<String> ?: emptyList(),
                             startOfWeek = trip.getString("startOfWeek") ?: "",
                             endOfWeek = trip.getString("endOfWeek") ?: "",
+                            passengers = trip["passengers"] as? List<String> ?: emptyList()
                         )
 
                         if (tripObject.origincoordinates.latitude in (searcherOriginCoordinates.latitude - margin)..(searcherOriginCoordinates.latitude + margin) &&
@@ -201,8 +207,39 @@ class SearcherViewModel @Inject constructor(
             .document(selectedTrip!!.uid)
             .get()
             .addOnSuccessListener { document ->
-                println("DRIVER: $document")
                 driver = document.toObject(UserLogged::class.java)
             }
+    }
+
+    fun bookASeat() {
+        if (userId !== ""){
+            FirebaseFirestore.getInstance()
+                .collection("trips")
+                .document(selectedTrip!!.tripId)
+                .update("passengers",
+                    com.google.firebase.firestore.FieldValue.arrayUnion(userId)
+                )
+                .addOnSuccessListener {
+                    println("Seat booked successfully!")
+                }
+                .addOnFailureListener { e ->
+                    println("Error booking seat: ${e.message}")
+                }
+        } else {
+            println("No user logged in")
+        }
+    }
+
+    fun getUserId(){
+        viewModelScope.launch {
+            authRepository.getCurrentUser(CallBackHandle(
+                onSuccess = { user ->
+                    userId = user.uid
+                },
+                onError = {
+                    Log.e("ProfileViewModel", "Error al acceder a la informacion del usuario: $it")
+                }
+            ))
+        }
     }
 }

@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.workbycar.ui.view_models.LoginViewModel
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import com.example.workbycar.ui.view_models.chats.ChatsViewModel
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
@@ -19,6 +20,7 @@ import com.example.workbycar.ui.views.LogInScreen
 import com.example.workbycar.ui.views.MainScreen
 import com.example.workbycar.ui.views.sign_up.SignUpScreen
 import com.example.workbycar.ui.views.SplashScreen
+import com.example.workbycar.ui.views.messages.ChatScreen
 import com.example.workbycar.ui.views.messages.MessagesScreen
 import com.example.workbycar.ui.views.post.DateSelectionScreen
 import com.example.workbycar.ui.views.post.DepartureTimeSelectionScreen
@@ -50,7 +52,8 @@ fun AppNavigation(loginViewModel: LoginViewModel,
                   profileViewModel: ProfileViewModel,
                   postTripsViewModel: PostTripsViewModel,
                   userTripsViewModel: UserTripsViewModel,
-                  searcherViewModel: SearcherViewModel) {
+                  searcherViewModel: SearcherViewModel,
+                  chatsViewModel: ChatsViewModel) {
     val navController = rememberNavController()
 
     NavHost(
@@ -82,14 +85,14 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             FoundTripsScreen(navController, searcherViewModel)
         }
         composable(AppScreens.TripInformationScreen.route){
-            TripInformationScreen(navController, searcherViewModel)
+            TripInformationScreen(navController, searcherViewModel, chatsViewModel)
         }
         composable(
-            route = "${AppScreens.MapScreen.route}/{isEditable}",
-            arguments = listOf(navArgument("isEditable") { type = NavType.BoolType })
+            route = "${AppScreens.MapScreen.route}/{isOrigin}",
+            arguments = listOf(navArgument("isOrigin") { type = NavType.BoolType })
         ) { backStackEntry ->
-            val isEditable = backStackEntry.arguments?.getBoolean("isEditable") ?: false
-            MapScreen(navController, searcherViewModel, isEditable)
+            val isOrigin = backStackEntry.arguments?.getBoolean("isOrigin") ?: false
+            MapScreen(navController, searcherViewModel, isOrigin)
         }
         composable(AppScreens.TripsScreen.route) {
             TripsScreen(navController, userTripsViewModel, searcherViewModel)
@@ -140,7 +143,10 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             PublicationConfirmationScreen(navController)
         }
         composable(AppScreens.MessagesScreen.route) {
-            MessagesScreen(navController, searcherViewModel)
+            MessagesScreen(navController, searcherViewModel, chatsViewModel)
+        }
+        composable(AppScreens.ChatScreen.route) {
+            ChatScreen(navController, chatsViewModel)
         }
     }
 }

@@ -11,15 +11,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.outlined.ChatBubble
@@ -34,6 +37,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
+import com.example.workbycar.ui.view_models.chats.ChatsViewModel
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -53,7 +58,10 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripInformationScreen(navController: NavController, searcherViewModel: SearcherViewModel) {
+fun TripInformationScreen(navController: NavController, searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel) {
+    LaunchedEffect (Unit) {
+        searcherViewModel.getUserId()
+    }
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "Found Trips") },
@@ -63,6 +71,14 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
                 }
             }
         )
+    },
+    bottomBar = {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            ReservationButtom(searcherViewModel)
+        }
     }) { paddingValues ->
         LazyColumn (
             modifier = Modifier.padding(paddingValues)
@@ -88,7 +104,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
                 )
             }
             item {
-                ThirdSection(searcherViewModel)
+                ThirdSection(searcherViewModel, chatsViewModel)
             }
         }
     }
@@ -198,7 +214,7 @@ fun SecondSection(searcherViewModel: SearcherViewModel){
 }
 
 @Composable
-fun ThirdSection(searcherViewModel: SearcherViewModel){
+fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel){
     Column {
         Row(
             modifier = Modifier
@@ -267,7 +283,9 @@ fun ThirdSection(searcherViewModel: SearcherViewModel){
         Spacer(modifier = Modifier.height(16.dp))
         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Button(
-                onClick = { println("Not available") },
+                onClick = {
+
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -278,7 +296,11 @@ fun ThirdSection(searcherViewModel: SearcherViewModel){
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.clickable {
+                            chatsViewModel.openOrCreateChat(searcherViewModel.userId, searcherViewModel.selectedTrip!!.uid){ chatId ->
+                        }
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.ChatBubble,
@@ -298,8 +320,56 @@ fun ThirdSection(searcherViewModel: SearcherViewModel){
 }
 
 @Composable
-fun FourthSection(searcherViewModel: SearcherViewModel){
-
+fun ReservationButtom(searcherViewModel: SearcherViewModel){
+    if (searcherViewModel.selectedTrip!!.automatedReservation){
+        Button(
+            onClick = {
+                searcherViewModel.bookASeat()
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF0D47A1),
+                contentColor = Color.White
+            ),
+            shape = RoundedCornerShape(8.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Book a seat")
+            }
+        }
+    } else {
+        Button(
+            onClick = {
+                searcherViewModel.bookASeat()
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF0D47A1),
+                contentColor = Color.White
+            ),
+            shape = RoundedCornerShape(8.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Send request")
+            }
+        }
+    }
 }
 
 

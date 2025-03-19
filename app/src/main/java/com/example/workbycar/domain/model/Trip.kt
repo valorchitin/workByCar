@@ -5,6 +5,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 data class Trip(
+    val tripId: String = "",
     val uid: String,
     val origin: String,
     val destination: String,
@@ -19,4 +20,5 @@ data class Trip(
     val automatedReservation: Boolean,
     val price: Int,
     val description: String,
+    val passengers: List<String>,
 )
