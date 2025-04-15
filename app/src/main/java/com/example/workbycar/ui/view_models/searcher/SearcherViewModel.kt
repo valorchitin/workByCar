@@ -1,5 +1,8 @@
 package com.example.workbycar.ui.view_models.searcher
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
@@ -19,6 +22,8 @@ import com.example.workbycar.domain.model.Trip
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
 import com.example.workbycar.utils.CallBackHandle
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -241,5 +246,11 @@ class SearcherViewModel @Inject constructor(
                 }
             ))
         }
+    }
+
+    fun getResizedBitmap(context: Context, resId: Int, width: Int, height: Int): BitmapDescriptor {
+        val bitmap = BitmapFactory.decodeResource(context.resources, resId)
+        val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false)
+        return BitmapDescriptorFactory.fromBitmap(resizedBitmap)
     }
 }

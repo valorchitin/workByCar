@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -28,11 +29,16 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.workbycar.R
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.PolyUtil
 import com.google.maps.android.compose.GoogleMap
@@ -45,21 +51,28 @@ import com.google.maps.android.compose.rememberCameraPositionState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RouteSelectionScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
-    Scaffold(topBar = {
-        TopAppBar(
-            title = { Text(text = "RouteSelectionScreen") },
-            navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow back")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "") },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Arrow back"
+                        )
+                    }
                 }
-            }
-        )
-    }) { paddingValues ->
-        Column (
-            modifier = Modifier.padding(paddingValues)
-        ){
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
             Routes(postTripsViewModel, navController)
         }
     }
@@ -79,49 +92,77 @@ fun Routes(
     }
 
     LaunchedEffect(Unit) {
-        postTripsViewModel.getRoutes(postTripsViewModel.origincoordinates, postTripsViewModel.destinationcoordinates)
+        postTripsViewModel.getRoutes(
+            postTripsViewModel.origincoordinates,
+            postTripsViewModel.destinationcoordinates
+        )
     }
 
     Column(Modifier.fillMaxSize()) {
         GoogleMap(
-            modifier = Modifier.fillMaxWidth()
-                .fillMaxHeight(0.5f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.45f),
             cameraPositionState = cameraPositionState
         ) {
             routes.forEachIndexed { index, route ->
                 if (index == selectedRouteIndex) {
                     Polyline(
                         points = PolyUtil.decode(route.overview_polyline.points),
-                        color = Color.Blue,
+                        color = Color(0xFF0277BD),
                         width = 8f
                     )
                 }
             }
 
-            Marker(state = MarkerState(position = postTripsViewModel.origincoordinates), title = "Origin")
-            Marker(state = MarkerState(position = postTripsViewModel.destinationcoordinates), title = "Destination")
+            Marker(
+                state = MarkerState(position = postTripsViewModel.origincoordinates),
+                title = "Origin",
+                icon = postTripsViewModel.getResizedBitmap(LocalContext.current, R.drawable.rec, 50, 50)
+            )
+
+            Marker(
+                state = MarkerState(position = postTripsViewModel.destinationcoordinates),
+                title = "Destination",
+                icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
+            )
         }
 
-        Text("¿What is your route?",
-            fontSize = 20.sp)
+        Text(
+            text = "Select your preferred route",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = Color(0xFF0277BD),
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 12.dp)
+        )
 
         if (routes.isNotEmpty()) {
-            LazyColumn (
-                Modifier.fillMaxWidth()
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
             ) {
                 items(routes.take(3)) { route ->
                     val index = routes.indexOf(route)
-                    Row (
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
+                    val totalDistanceInMeters = route.legs.sumOf { it.distance.value }
+                    val totalDistanceInKilometers = totalDistanceInMeters / 1000.0
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Text(
-                            "Option ${index + 1}",
-                            modifier = Modifier.padding(start = 16.dp)
+                            text = "Option ${index + 1} - ${"%.2f".format(totalDistanceInKilometers)} km",
+                            fontSize = 16.sp
                         )
                         RadioButton(
                             onClick = { postTripsViewModel.selectRoute(index) },
-                            selected = (index == selectedRouteIndex),
+                            selected = index == selectedRouteIndex
                         )
                     }
                 }
@@ -130,11 +171,19 @@ fun Routes(
 
         Button(
             onClick = {
-                postTripsViewModel.selectedRoute = postTripsViewModel.routes.value?.get(selectedRouteIndex)
+                postTripsViewModel.selectedRoute =
+                    postTripsViewModel.routes.value?.get(selectedRouteIndex)
                 navController.navigate(AppScreens.DateSelectionScreen.route)
-            }
+            },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = 24.dp)
         ) {
-            Text("Continue")
+            Text(
+                text = "Continue",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

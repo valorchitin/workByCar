@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,12 +13,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -25,10 +28,12 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
@@ -40,11 +45,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
+import com.example.workbycar.utils.CountryCodes
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -55,7 +62,7 @@ import java.util.Locale
 fun EditUserInfoScreen(navController: NavController, profileViewModel: ProfileViewModel){
     Scaffold(topBar = {
         TopAppBar(
-            title = {Text(text = "Personal Data")},
+            title = {Text(text = "Personal Data", fontWeight = FontWeight.Bold)},
             navigationIcon = {
                 IconButton(onClick = {
                     navController.popBackStack()
@@ -73,29 +80,65 @@ fun EditUserInfoScreen(navController: NavController, profileViewModel: ProfileVi
 @Composable
 fun EditUserInfoContent(modifier: Modifier = Modifier, profileViewModel: ProfileViewModel, navController: NavController){
     val context = LocalContext.current
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Name:")
-        NameTextView(profileViewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Surname:")
-        SurnameTextView(profileViewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Phone prefix:")
-        PhoneCodeDropDown(profileViewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Phone number: ")
-        PhoneTextView(profileViewModel)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Birthdate: ")
-        BirthDateButton(profileViewModel)
-        Spacer(modifier = Modifier.height(32.dp))
-        SaveChangesButton(profileViewModel, context, navController)
+        item {
+            Text(
+                text = "Name:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            NameTextView(profileViewModel)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Text(
+                text = "Surname:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            SurnameTextView(profileViewModel)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Text(
+                text = "Phone prefix:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            PhoneCodeDropDown(profileViewModel)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Text(
+                text = "Phone number:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            PhoneTextView(profileViewModel)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Text(
+                text = "Birthdate:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            BirthDateTextField(profileViewModel)
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+        item {
+            SaveChangesButton(profileViewModel, context, navController)
+        }
     }
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -123,26 +166,35 @@ fun SurnameTextView(profileViewModel: ProfileViewModel){
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BirthDateButton(profileViewModel: ProfileViewModel){
-    var showDatePicker by remember{ mutableStateOf(false) }
-
-    var selectedDate by remember{ mutableStateOf<Long?>(null) }
+fun BirthDateTextField(profileViewModel: ProfileViewModel) {
+    var showDatePicker by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf<Long?>(null) }
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val formattedDate = selectedDate?.let { dateFormat.format(Date(it)) } ?: (dateFormat.format(profileViewModel.birthDate))
 
-
-    Button(
-        onClick = { showDatePicker = true},
-        shape = CutCornerShape(0),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.LightGray,
-            contentColor = Color.Black
-        ),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text( text = formattedDate)
-    }
+    TextField(
+        value = formattedDate,
+        onValueChange = {},
+        label = { Text("Date of Birth") },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable (
+                onClick = {
+                    showDatePicker = true
+                }
+            ),
+        enabled = false,
+        shape = RoundedCornerShape(8.dp),
+        colors = TextFieldDefaults.colors(
+            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+            disabledIndicatorColor = MaterialTheme.colorScheme.outline,
+            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledLeadingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    )
 
     if (showDatePicker) {
         DatePickerModal(
@@ -190,25 +242,13 @@ fun DatePickerModal(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhoneCodeDropDown(profileViewModel: ProfileViewModel) {
-    val countryCodes = listOf(
-        "United States (+1)",
-        "United Kingdom (+44)",
-        "Canada (+1)",
-        "France (+33)",
-        "Germany (+49)",
-        "Spain (+34)",
-        "Mexico (+52)"
-    )
-
     var expanded by remember{ mutableStateOf(false) }
     var selectedCode by remember{ mutableStateOf(profileViewModel.prefix) }
 
-    // Caja que contiene el TextField y el menú desplegable
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
-        // TextField que actúa como disparador del menú
         TextField(
             value = selectedCode,
             onValueChange = {
@@ -218,15 +258,21 @@ fun PhoneCodeDropDown(profileViewModel: ProfileViewModel) {
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
-            modifier = Modifier.fillMaxWidth().menuAnchor()
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+                .border(
+                    width = 0.dp,
+                    color = Color.White,
+                    shape = CutCornerShape(5.dp)
+                )
         )
 
-        // Menú desplegable
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            countryCodes.forEach { countryCode ->
+            CountryCodes.countryCodes.forEach { countryCode ->
                 DropdownMenuItem(
                     text = { Text(countryCode) },
                     onClick = {
@@ -265,6 +311,10 @@ fun SaveChangesButton(profileViewModel: ProfileViewModel, context: Context, navC
         Toast.makeText(context, "Saved correctly", Toast.LENGTH_LONG).show()
         navController.navigate(AppScreens.ProfileScreen.route)
     }) {
-        Text("Save")
+        Text(
+            text = "Save",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
     }
 }

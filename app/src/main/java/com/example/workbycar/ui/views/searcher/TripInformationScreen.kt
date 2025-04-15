@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,19 +51,20 @@ import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.chats.ChatsViewModel
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripInformationScreen(navController: NavController, searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel) {
+fun TripInformationScreen(navController: NavController, searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, isMyTrip: Boolean) {
     LaunchedEffect (Unit) {
         searcherViewModel.getUserId()
     }
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "Found Trips") },
+            title = { Text(text = "") },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
@@ -77,7 +77,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ReservationButtom(searcherViewModel)
+            ReservationButton(searcherViewModel)
         }
     }) { paddingValues ->
         LazyColumn (
@@ -104,7 +104,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
                 )
             }
             item {
-                ThirdSection(searcherViewModel, chatsViewModel)
+                ThirdSection(searcherViewModel, chatsViewModel, isMyTrip)
             }
         }
     }
@@ -124,13 +124,27 @@ fun FirstSection(navController: NavController, searcherViewModel: SearcherViewMo
 
     val formattedArrivalTime = arrivalTime?.format(formatter)
 
-    for (day in searcherViewModel.selectedTrip!!.dates){
+    val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
+    val formattedDates = searcherViewModel.selectedTrip!!.dates
+        .mapNotNull {
+            try {
+                LocalDate.parse(it, inputFormatter).format(outputFormatter)
+            } catch (e: Exception) {
+                null
+            }
+        }
+        .sorted()
+
+    for (day in formattedDates){
         Text(
             text = day,
-            modifier = Modifier.padding(horizontal = 16.dp),
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Start)
+            color = Color(0xFF0277BD),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
     }
     Spacer(modifier = Modifier.height(16.dp))
     Row(
@@ -214,7 +228,7 @@ fun SecondSection(searcherViewModel: SearcherViewModel){
 }
 
 @Composable
-fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel){
+fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, isMyTrip: Boolean){
     Column {
         Row(
             modifier = Modifier
@@ -281,38 +295,44 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Button(
-                onClick = {
+        if (!isMyTrip){
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                Button(
+                    onClick = {
 
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-                border = BorderStroke(2.dp, Color(0xFF0D47A1)),
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.wrapContentWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.clickable {
-                            chatsViewModel.openOrCreateChat(searcherViewModel.userId, searcherViewModel.selectedTrip!!.uid){ chatId ->
-                        }
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    border = BorderStroke(2.dp, Color(0xFF0D47A1)),
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.wrapContentWidth()
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.ChatBubble,
-                        contentDescription = "Chat Icon",
-                        tint = Color(0xFF0D47A1)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Contact ${searcherViewModel.driver?.name}",
-                        color = Color(0xFF0D47A1),
-                        fontSize = 20.sp,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.clickable {
+                            chatsViewModel.openOrCreateChat(
+                                searcherViewModel.userId,
+                                searcherViewModel.selectedTrip!!.uid
+                            ) { chatId ->
+                                // lógica adicional opcional
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.ChatBubble,
+                            contentDescription = "Chat Icon",
+                            tint = Color(0xFF0D47A1)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Contact ${searcherViewModel.driver?.name}",
+                            color = Color(0xFF0D47A1),
+                            fontSize = 20.sp,
+                        )
+                    }
                 }
             }
         }
@@ -320,12 +340,13 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
 }
 
 @Composable
-fun ReservationButtom(searcherViewModel: SearcherViewModel){
+fun ReservationButton(searcherViewModel: SearcherViewModel){
     if (searcherViewModel.selectedTrip!!.automatedReservation){
         Button(
             onClick = {
                 searcherViewModel.bookASeat()
             },
+            enabled = searcherViewModel.selectedTrip!!.passengers.size != searcherViewModel.selectedTrip!!.passengersNumber,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
@@ -342,7 +363,11 @@ fun ReservationButtom(searcherViewModel: SearcherViewModel){
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Book a seat")
+                Text(
+                    text = "Book a seat",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     } else {
@@ -350,6 +375,7 @@ fun ReservationButtom(searcherViewModel: SearcherViewModel){
             onClick = {
                 searcherViewModel.bookASeat()
             },
+            enabled = searcherViewModel.selectedTrip!!.passengers.size != searcherViewModel.selectedTrip!!.passengersNumber,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
@@ -366,7 +392,11 @@ fun ReservationButtom(searcherViewModel: SearcherViewModel){
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Send request")
+                Text(
+                    text = "Send request",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
