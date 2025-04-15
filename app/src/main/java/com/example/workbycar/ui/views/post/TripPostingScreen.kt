@@ -2,6 +2,7 @@ package com.example.workbycar.ui.views.post
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,9 +21,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
@@ -41,7 +46,10 @@ fun TripPostingScreen(navController: NavController, postTripsViewModel: PostTrip
                 }) {
                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow back")
                 }
-            }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White
+            )
         )
     }) { paddingValues ->
         Box(
@@ -52,13 +60,20 @@ fun TripPostingScreen(navController: NavController, postTripsViewModel: PostTrip
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
                     text = "Do you want to add something else about your trip?",
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF0277BD),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 32.dp)
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
+
                 TextField(
                     value = postTripsViewModel.description,
                     onValueChange = { newDescription ->
@@ -77,8 +92,13 @@ fun TripPostingScreen(navController: NavController, postTripsViewModel: PostTrip
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
+                    .fillMaxWidth()
             ) {
-                Text(text = "Post")
+                Text(
+                    text = "Post",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }

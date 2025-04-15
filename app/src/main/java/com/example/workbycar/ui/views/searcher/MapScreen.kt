@@ -14,6 +14,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,8 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.workbycar.R
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.PolyUtil
@@ -39,7 +42,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 fun MapScreen(navController: NavController, searcherViewModel: SearcherViewModel, isOrigin: Boolean){
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "Found Trips") },
+            title = { Text(text = "") },
             navigationIcon = {
                 IconButton(onClick = { navController.popBackStack() }) {
                     Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
@@ -75,7 +78,11 @@ fun MapSection(searcherViewModel: SearcherViewModel, paddingValues: PaddingValue
                 width = 8f
             )
 
-            Marker(state = MarkerState(position = searcherViewModel.selectedTrip!!.origincoordinates), title = "Origin")
+            Marker(
+                state = MarkerState(position = searcherViewModel.selectedTrip!!.origincoordinates),
+                title = "Origin",
+                icon = searcherViewModel.getResizedBitmap(LocalContext.current, R.drawable.rec, 50, 50)
+            )
             Marker(state = MarkerState(position = searcherViewModel.selectedTrip!!.destinationcoordinates), title = "Destination")
         }
 
@@ -100,7 +107,11 @@ fun MapSection(searcherViewModel: SearcherViewModel, paddingValues: PaddingValue
                 contentColor = Color.White
             )
         ) {
-            Text(text = "Open in google maps")
+            Text(
+                text = "Open in google maps",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

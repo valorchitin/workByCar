@@ -1,5 +1,8 @@
 package com.example.workbycar.ui.view_models.postTrips
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
@@ -23,23 +26,31 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.example.workbycar.domain.repository.DirectionsAPIService
 import com.example.workbycar.utils.CallBackHandle
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalTime
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 @HiltViewModel
-class PostTripsViewModel @Inject constructor(private val authRepository: AuthRepository,
-                                             private val placesClient: PlacesClient,
-                                             private val geocoder: Geocoder,
-                                             private val directionsAPIService: DirectionsAPIService,
-                                             private val apiKeyProvider: ApiKeyProvider): ViewModel() {
+class PostTripsViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val authRepository: AuthRepository,
+    private val placesClient: PlacesClient,
+    private val geocoder: Geocoder,
+    private val directionsAPIService: DirectionsAPIService,
+    private val apiKeyProvider: ApiKeyProvider): ViewModel() {
 
         private var sessionToken = AutocompleteSessionToken.newInstance()
         private var auth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -122,6 +133,52 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
             }
         }
 
+        @OptIn(ExperimentalCoroutinesApi::class)
+        suspend fun getAddressFromCoordinates(latLng: LatLng): Address? = suspendCancellableCoroutine { cont ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                geocoder.getFromLocation(
+                    latLng.latitude,
+                    latLng.longitude,
+                    1,
+                    object : Geocoder.GeocodeListener {
+                        override fun onGeocode(addresses: MutableList<Address>) {
+                            cont.resume(addresses.firstOrNull(), null)
+                        }
+
+                        override fun onError(errorMessage: String?) {
+                            cont.resume(null, null)
+                        }
+                    }
+                )
+            } else {
+                try {
+                    @Suppress("DEPRECATION")
+                    val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+                    cont.resume(addresses?.firstOrNull(), null)
+                } catch (e: IOException) {
+                    cont.resume(null, null)
+                }
+            }
+        }
+
+        fun updateOriginNameFromCoordinates(latLng: LatLng) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val address = getAddressFromCoordinates(latLng)
+                address?.let {
+                    origin = it.getAddressLine(0) ?: ""
+                }
+            }
+        }
+
+        fun updateDestinationNameFromCoordinates(latLng: LatLng) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val address = getAddressFromCoordinates(latLng)
+                address?.let {
+                    destination = it.getAddressLine(0) ?: ""
+                }
+            }
+        }
+
         fun getRoutes(origin: LatLng, destination: LatLng) {
             viewModelScope.launch {
                 try {
@@ -140,6 +197,12 @@ class PostTripsViewModel @Inject constructor(private val authRepository: AuthRep
 
         fun selectRoute(index: Int) {
             _selectedRouteIndex.value = index
+        }
+
+        fun getResizedBitmap(context: Context, resId: Int, width: Int, height: Int): BitmapDescriptor {
+            val bitmap = BitmapFactory.decodeResource(context.resources, resId)
+            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, width, height, false)
+            return BitmapDescriptorFactory.fromBitmap(resizedBitmap)
         }
 
         fun increasePassengers() {

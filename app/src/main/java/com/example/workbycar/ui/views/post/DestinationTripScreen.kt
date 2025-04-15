@@ -2,6 +2,9 @@ package com.example.workbycar.ui.views.post
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,22 +14,32 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
@@ -38,12 +51,12 @@ import com.example.workbycar.ui.view_models.postTrips.PostTripsViewModel
 fun DestinationTripScreen(navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "DestinationTripScreen") },
+            title = { Text(text = "") },
             navigationIcon = {
                 IconButton(onClick = {
                     navController.popBackStack()
                 }) {
-                    Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
+                    Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow back")
                 }
             }
         )
@@ -60,7 +73,13 @@ fun DestinationTripContent(navController: NavController, modifier: Modifier = Mo
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text("Where are you going?")
+        Text(
+            text = "Where are you headed?",
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF0277BD),
+            textAlign = TextAlign.Center
+        )
         DestinationTextView(navController, postTripsViewModel)
     }
 }
@@ -74,41 +93,76 @@ fun DestinationTextView(navController: NavController, postTripsViewModel: PostTr
             .padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        TextField(
+        OutlinedTextField(
             value = postTripsViewModel.destination,
             onValueChange = { newDestination ->
                 postTripsViewModel.destination = newDestination
                 postTripsViewModel.onPlaceChange(newDestination)
             },
             label = { Text("Write the full address") },
-            modifier = Modifier.fillMaxWidth()
+            leadingIcon = {
+                Icon(imageVector = Icons.Filled.Search, contentDescription = "Search Icon", tint = MaterialTheme.colorScheme.primary)
+            },
+            trailingIcon = {
+                if (postTripsViewModel.destination.isNotEmpty()) {
+                    IconButton(onClick = { postTripsViewModel.destination = "" }) {
+                        Icon(imageVector = Icons.Filled.Clear, contentDescription = "Clear", tint = Color.Gray)
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White, shape = RoundedCornerShape(8.dp)),
+            shape = RoundedCornerShape(12.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn {
-            items(postTripsViewModel.predictions) { (predictionText, _) ->
-                Row(
+        AnimatedVisibility(visible = postTripsViewModel.predictions.isNotEmpty()) {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
-                        .clickable {
-                            postTripsViewModel.destination = predictionText
-                            postTripsViewModel.getCoordinates(postTripsViewModel.destination, 1)
-                            navController.navigate(AppScreens.DestinationInMapScreen.route)
-                        },
-                    verticalAlignment = Alignment.CenterVertically
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .padding(vertical = 8.dp)
+                        .animateContentSize()
                 ) {
-                    Text(
-                        text = predictionText,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = "Select location",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+                    items(postTripsViewModel.predictions) { (predictionText, _) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp, vertical = 8.dp)
+                                .clickable {
+                                    postTripsViewModel.destination = predictionText
+                                    postTripsViewModel.getCoordinates(postTripsViewModel.destination, 1)
+                                    navController.navigate(AppScreens.DestinationInMapScreen.route)
+                                }
+                                .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Place,
+                                contentDescription = "Location Icon",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = predictionText,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = "Select location",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.example.workbycar.ui.views.sign_up
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -30,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -37,19 +40,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.SignUpViewModel
+import com.example.workbycar.utils.CountryCodes
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun AddPhoneScreen(navController: NavController, signUpViewModel: SignUpViewModel){
     val context = LocalContext.current
 
-    var isSignUpSucces by remember { mutableStateOf(false) }
+    var isSignUpSuccess by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         signUpViewModel.loadCurrentUser()
         Log.d("Datos sign up: ", signUpViewModel.name)
     }
-    if (!isSignUpSucces) {
+    if (!isSignUpSuccess) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -57,12 +61,33 @@ fun AddPhoneScreen(navController: NavController, signUpViewModel: SignUpViewMode
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+            text = "Enter Your\nPhone Number",
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF0061A8),
+            textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = "Country Code:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
             PhoneCodeDropDown(signUpViewModel)
-            Spacer(modifier = Modifier.height(8.dp))
-            PhoneTextView(signUpViewModel)
             Spacer(modifier = Modifier.height(16.dp))
-            ButtonSendMessage(signUpViewModel, context){ signUpSuccesful ->
-                isSignUpSucces = signUpSuccesful
+
+            Text(
+                text = "Phone Number:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+            PhoneTextView(signUpViewModel)
+            Spacer(modifier = Modifier.height(32.dp))
+
+            ButtonSendMessage(signUpViewModel, context){ signUpSuccessful ->
+                isSignUpSuccess = signUpSuccessful
             }
         }
     } else {
@@ -73,17 +98,27 @@ fun AddPhoneScreen(navController: NavController, signUpViewModel: SignUpViewMode
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Message sent.")
-            Text("Please verify your email address through mail")
-            ContinueButton(navController, context)
+            Text(
+                text = "Message sent.\nPlease verify your email address through mail",
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF0061A8),
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "If you have not received the message\nor\nencountered another problem,\nclick the following link:",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF424242)
             )
             SendMessageHyperLinkText(signUpViewModel)
+            Spacer(modifier = Modifier.height(32.dp))
+            ContinueButton(navController, context)
         }
     }
 }
@@ -91,25 +126,13 @@ fun AddPhoneScreen(navController: NavController, signUpViewModel: SignUpViewMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhoneCodeDropDown(signUpViewModel: SignUpViewModel) {
-    val countryCodes = listOf(
-        "United States (+1)",
-        "United Kingdom (+44)",
-        "Canada (+1)",
-        "France (+33)",
-        "Germany (+49)",
-        "Spain (+34)",
-        "Mexico (+52)"
-    )
-
     var expanded by remember{ mutableStateOf(false) }
     var selectedCode by remember{ mutableStateOf("") }
 
-    // Caja que contiene el TextField y el menú desplegable
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
-        // TextField que actúa como disparador del menú
         TextField(
             value = selectedCode,
             onValueChange = {
@@ -119,15 +142,21 @@ fun PhoneCodeDropDown(signUpViewModel: SignUpViewModel) {
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
-            modifier = Modifier.menuAnchor()
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth()
+                .border(
+                    width = 0.dp,
+                    color = Color.White,
+                    shape = CutCornerShape(5.dp)
+                )
         )
 
-        // Menú desplegable
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            countryCodes.forEach { countryCode ->
+            CountryCodes.countryCodes.forEach { countryCode ->
                 DropdownMenuItem(
                     text = { Text(countryCode) },
                     onClick = {
@@ -153,18 +182,24 @@ fun PhoneTextView(signUpViewModel: SignUpViewModel) {
         },
         label = {Text("Phone number")},
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 0.dp,
+                color = Color.White,
+                shape = CutCornerShape(5.dp)
+            )
     )
 }
 
 @Composable
-fun ButtonSendMessage(signUpViewModel: SignUpViewModel, context: Context, onSignUpSucces: (Boolean) -> Unit){
+fun ButtonSendMessage(signUpViewModel: SignUpViewModel, context: Context, onSignUpSuccess: (Boolean) -> Unit){
     Button(
         onClick = {
             if (signUpViewModel.phoneNotEmpty()) {
                 signUpViewModel.signUp { success ->
                        if (success) {
-                           onSignUpSucces(true)
+                           onSignUpSuccess(true)
                        } else {
                             Toast.makeText(context, "Error on Sign In", Toast.LENGTH_LONG).show()
                        }
@@ -174,7 +209,11 @@ fun ButtonSendMessage(signUpViewModel: SignUpViewModel, context: Context, onSign
             }
         }
     ) {
-        Text("Add phone")
+        Text(
+            text = "Add phone",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
@@ -182,10 +221,12 @@ fun ButtonSendMessage(signUpViewModel: SignUpViewModel, context: Context, onSign
 fun SendMessageHyperLinkText(signUpViewModel: SignUpViewModel){
     Text(
         text = "send message again",
+        fontWeight = FontWeight.Bold,
         modifier = Modifier.clickable{
             signUpViewModel.sendVerificationEmail()
         },
-        color = Color.Blue,
+        style = MaterialTheme.typography.titleLarge,
+        color = Color(0xFF0061A8),
         textDecoration = TextDecoration.Underline
     )
 }
@@ -206,8 +247,12 @@ fun ContinueButton(navController: NavController, context: Context){
                     Toast.makeText(context, "Error reloading user data", Toast.LENGTH_LONG).show()
                 }
             }
-        }
+        },
     ) {
-        Text(text = "Continue")
+        Text(
+            text = "Continue",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold
+        )
     }
 }

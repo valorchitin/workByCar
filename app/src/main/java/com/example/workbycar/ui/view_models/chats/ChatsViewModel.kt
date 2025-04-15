@@ -1,6 +1,8 @@
 package com.example.workbycar.ui.view_models.chats
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -18,6 +20,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -161,5 +166,20 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
                 val messagesList = snapshots?.documents?.mapNotNull { it.toObject(Message::class.java) } ?: emptyList()
                 _messages.postValue(messagesList)
             }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun formatTimestampWhatsAppStyle(timestamp: Timestamp): String {
+        val messageDateTime = timestamp.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
+        val messageDate = messageDateTime.toLocalDate()
+        val today = LocalDate.now()
+        val yesterday = today.minusDays(1)
+
+        return when (messageDate) {
+            today -> messageDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+            yesterday -> "Yesterday"
+            else -> messageDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yy"))
+        }
     }
 }

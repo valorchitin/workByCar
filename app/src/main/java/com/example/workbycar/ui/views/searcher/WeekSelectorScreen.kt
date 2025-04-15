@@ -3,6 +3,7 @@ package com.example.workbycar.ui.views.searcher
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,12 +18,19 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,7 +39,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,8 +77,6 @@ fun WeekSelectorScreen(navController: NavController, searcherViewModel: Searcher
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Week Selector")
-
             MultiSelectCalendar(searcherViewModel)
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -78,9 +86,16 @@ fun WeekSelectorScreen(navController: NavController, searcherViewModel: Searcher
                     navController.navigate(AppScreens.MainScreen.route)
                 },
                 enabled = searcherViewModel.searcherStartOfWeek != null && searcherViewModel.searcherEndOfWeek != null,
-                modifier = Modifier.padding(bottom = 40.dp)
+                modifier = Modifier.padding(bottom = 40.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text("Continue")
+                Text(
+                    text = "Continue",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
             }
         }
     }
@@ -93,7 +108,7 @@ fun MultiSelectCalendar(searcherViewModel: SearcherViewModel) {
     val selectedWeekStart = remember { mutableStateOf<LocalDate?>(null) }
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier
@@ -102,35 +117,37 @@ fun MultiSelectCalendar(searcherViewModel: SearcherViewModel) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "<",
-                fontSize = 24.sp,
-                modifier = Modifier.clickable {
-                    currentMonth.value = currentMonth.value.minusMonths(1)
-                }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Previous month",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { currentMonth.value = currentMonth.value.minusMonths(1) }
             )
             Text(
-                text = currentMonth.value.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-                        + " " + currentMonth.value.year,
+                text = "${currentMonth.value.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.value.year}",
                 fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
-            Text(
-                text = ">",
-                fontSize = 24.sp,
-                modifier = Modifier.clickable {
-                    currentMonth.value = currentMonth.value.plusMonths(1)
-                }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Next month",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { currentMonth.value = currentMonth.value.plusMonths(1) }
             )
         }
 
-        LazyRow(
+        Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            items(7) { index ->
+            DayOfWeek.entries.forEach { day ->
                 Text(
-                    text = DayOfWeek.entries[index].getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                    text = day.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
                 )
@@ -143,14 +160,15 @@ fun MultiSelectCalendar(searcherViewModel: SearcherViewModel) {
         LazyColumn {
             items((daysInMonth + firstDayOfWeek - 1) / 7 + 1) { week ->
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
                     for (day in 1..7) {
                         val dayOfMonth = (week * 7 + day) - firstDayOfWeek + 1
                         if (dayOfMonth in 1..daysInMonth) {
                             val date = LocalDate.of(currentMonth.value.year, currentMonth.value.month, dayOfMonth)
-
                             val startOfWeek = date.minusDays(date.dayOfWeek.value.toLong() - 1)
                             val endOfWeek = startOfWeek.plusDays(6)
 
@@ -159,27 +177,32 @@ fun MultiSelectCalendar(searcherViewModel: SearcherViewModel) {
 
                             Box(
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(48.dp)
+                                    .clip(CircleShape)
                                     .background(
-                                        if (isSelectedWeek) Color.Blue else Color.Transparent,
+                                        if (isSelectedWeek) Color(0xFF0277BD) else Color.Transparent,
                                         shape = CircleShape
                                     )
-                                    .clickable(
-                                        onClick = {
-                                            selectedWeekStart.value = startOfWeek
-                                            searcherViewModel.searcherStartOfWeek = startOfWeek
-                                            searcherViewModel.searcherEndOfWeek = endOfWeek
-                                        }
-                                    ),
+                                    .border(
+                                        width = 2.dp,
+                                        color = if (isSelectedWeek) Color(0xFF0277BD) else Color.Gray,
+                                        shape = CircleShape
+                                    )
+                                    .clickable {
+                                        selectedWeekStart.value = startOfWeek
+                                        searcherViewModel.searcherStartOfWeek = startOfWeek
+                                        searcherViewModel.searcherEndOfWeek = endOfWeek
+                                    },
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = dayOfMonth.toString(),
+                                    fontWeight = FontWeight.Medium,
                                     color = if (isSelectedWeek) Color.White else Color.Black
                                 )
                             }
                         } else {
-                            Spacer(modifier = Modifier.size(40.dp))
+                            Spacer(modifier = Modifier.size(48.dp))
                         }
                     }
                 }

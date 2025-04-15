@@ -73,7 +73,7 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             AddPhoneScreen(navController, signUpViewModel)
         }
         composable(AppScreens.MainScreen.route){
-            MainScreen(navController, searcherViewModel)
+            MainScreen(navController, searcherViewModel, profileViewModel)
         }
         composable(AppScreens.PlaceSelectorScreen.route){
             PlaceSelectorScreen(navController, searcherViewModel)
@@ -84,8 +84,12 @@ fun AppNavigation(loginViewModel: LoginViewModel,
         composable(AppScreens.FoundTripsScreen.route){
             FoundTripsScreen(navController, searcherViewModel)
         }
-        composable(AppScreens.TripInformationScreen.route){
-            TripInformationScreen(navController, searcherViewModel, chatsViewModel)
+        composable(
+            route = "${AppScreens.TripInformationScreen.route}/{isMyTrip}",
+            arguments = listOf(navArgument("isMyTrip") { type = NavType.BoolType })
+        ){ backStackEntry ->
+            val isMyTrip = backStackEntry.arguments?.getBoolean("isMyTrip") ?: false
+            TripInformationScreen(navController, searcherViewModel, chatsViewModel, isMyTrip)
         }
         composable(
             route = "${AppScreens.MapScreen.route}/{isOrigin}",

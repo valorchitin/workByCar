@@ -1,12 +1,15 @@
 package com.example.workbycar.ui.views.messages
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,8 +37,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.workbycar.domain.model.Chat
 import com.example.workbycar.domain.model.UserLogged
@@ -43,34 +47,53 @@ import com.example.workbycar.ui.view_models.chats.ChatsViewModel
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import com.example.workbycar.ui.views.ButtonsMainScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessagesScreen(navController: NavController, searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel){
+fun MessagesScreen(
+    navController: NavController,
+    searcherViewModel: SearcherViewModel,
+    chatsViewModel: ChatsViewModel
+) {
     val chats by chatsViewModel.chats.observeAsState(emptyList())
 
-    LaunchedEffect (Unit) {
+    LaunchedEffect(Unit) {
         chatsViewModel.loadEveryChats()
     }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         text = "Chats",
-                        style = MaterialTheme.typography.headlineMedium
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF0277BD)
                     )
-                }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.White
+                )
             )
         },
         bottomBar = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ButtonsMainScreen(navController = navController, searcherViewModel = searcherViewModel)
             }
-        }) { paddingValues ->
-        LazyColumn(modifier = Modifier.padding(paddingValues = paddingValues)) {
+        },
+        containerColor = Color(0xFFF5F5F5)
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             items(chats) { chat ->
                 ChatElement(chat, chatsViewModel, navController)
             }
@@ -78,8 +101,9 @@ fun MessagesScreen(navController: NavController, searcherViewModel: SearcherView
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChatElement(chat: Chat, chatsViewModel: ChatsViewModel, navController: NavController){
+fun ChatElement(chat: Chat, chatsViewModel: ChatsViewModel, navController: NavController) {
     var otherUser by remember { mutableStateOf<UserLogged?>(null) }
 
     LaunchedEffect(chat) {
@@ -89,21 +113,22 @@ fun ChatElement(chat: Chat, chatsViewModel: ChatsViewModel, navController: NavCo
                 otherUser = user
             }
         } else {
-            Log.e("ChatElement", "No se encontró otro usuario en el chat")
+            Log.e("ChatElement", "No other user was found in the chat")
         }
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .clickable {
                 chatsViewModel.selectedUser = otherUser
                 chatsViewModel.selectedChat = chat
                 navController.navigate(AppScreens.ChatScreen.route)
             },
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.elevatedCardElevation(4.dp)
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
@@ -112,12 +137,12 @@ fun ChatElement(chat: Chat, chatsViewModel: ChatsViewModel, navController: NavCo
             Box(
                 modifier = Modifier
                     .size(50.dp)
-                    .background(Color.Gray, CircleShape)
+                    .background(Color(0xFF0277BD), CircleShape),
+                contentAlignment = Alignment.Center
             ) {
                 otherUser?.let {
                     Text(
-                        text = it.name,
-                        modifier = Modifier.align(Alignment.Center),
+                        text = it.name.firstOrNull()?.uppercase() + " " + it.surname.firstOrNull()?.uppercase(),
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
@@ -130,20 +155,22 @@ fun ChatElement(chat: Chat, chatsViewModel: ChatsViewModel, navController: NavCo
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = otherUser?.name ?: "...",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    text = otherUser?.name + " " + otherUser?.surname,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = chat.lastMessage.ifEmpty { "No hay mensajes aún" },
-                    fontSize = 14.sp,
-                    color = Color.Gray
+                    text = chat.lastMessage.ifEmpty { "There are no messages yet" },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
             Text(
-                text = chat.timestamp.toDate().toLocaleString().substring(11, 16),
-                fontSize = 12.sp,
+                text = chatsViewModel.formatTimestampWhatsAppStyle(chat.timestamp),
+                style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )
         }

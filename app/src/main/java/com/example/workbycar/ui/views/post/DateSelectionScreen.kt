@@ -3,6 +3,7 @@ package com.example.workbycar.ui.views.post
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,19 +19,25 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,37 +53,68 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DateSelectionScreen(navController: NavController, postTripsViewModel: PostTripsViewModel){
+fun DateSelectionScreen(navController: NavController, postTripsViewModel: PostTripsViewModel) {
     Scaffold(topBar = {
         TopAppBar(
-            title = { Text(text = "DateSelectionScreen") },
+            title = {
+                Text(
+                    text = "",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF0277BD)
+                )
+            },
             navigationIcon = {
                 IconButton(onClick = {
                     navController.popBackStack()
                 }) {
                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Arrow back")
                 }
-            }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.White
+            )
         )
     }) { paddingValues ->
-        Column (
-            modifier = Modifier.padding(paddingValues)
-        ){
+
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            Text(
+                text = "Please select the days you offer the trip",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF0277BD),
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, bottom = 12.dp)
+            )
+
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
             ) {
-                Text(text = "Please select the days you offer the trip")
-                MultiSelectCalendar (postTripsViewModel)
-                Button(
-                    onClick = {
-                        navController.navigate(AppScreens.DepartureTimeSelectionScreen.route)
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(16.dp)
-                ) {
-                    Text(text = "Continue")
-                }
+                MultiSelectCalendar(postTripsViewModel)
+            }
+
+            Button(
+                onClick = {
+                    navController.navigate(AppScreens.DepartureTimeSelectionScreen.route)
+                },
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    text = "Continue",
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
@@ -96,25 +134,30 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "<",
-                fontSize = 24.sp,
-                modifier = Modifier.clickable {
-                    currentMonth.value = currentMonth.value.minusMonths(1)
-                }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Previous month",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        currentMonth.value = currentMonth.value.minusMonths(1)
+                    }
             )
             Text(
-                text = currentMonth.value.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-                        + " " + currentMonth.value.year,
+                text = "${currentMonth.value.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${currentMonth.value.year}",
                 fontSize = 20.sp,
-                textAlign = TextAlign.Center
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                color = Color(0xFF0277BD)
             )
-            Text(
-                text = ">",
-                fontSize = 24.sp,
-                modifier = Modifier.clickable {
-                    currentMonth.value = currentMonth.value.plusMonths(1)
-                }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Next month",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        currentMonth.value = currentMonth.value.plusMonths(1)
+                    }
             )
         }
 
@@ -126,7 +169,9 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
                 Text(
                     text = DayOfWeek.entries[index].getDisplayName(TextStyle.SHORT, Locale.getDefault()),
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFF0277BD)
                 )
             }
         }
@@ -156,9 +201,16 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
 
                             Box(
                                 modifier = Modifier
-                                    .size(40.dp)
+                                    .size(48.dp)
+                                    .padding(4.dp)
+                                    .clip(CircleShape)
                                     .background(
-                                        if (isSelected) Color.Blue else Color.Transparent,
+                                        if (isSelected) Color(0xFF0277BD) else Color.Transparent,
+                                        shape = CircleShape
+                                    )
+                                    .border(
+                                        width = 2.dp,
+                                        color = if (isSelected) Color(0xFF0277BD) else Color.Gray,
                                         shape = CircleShape
                                     )
                                     .clickable(
@@ -183,11 +235,12 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
                             ) {
                                 Text(
                                     text = dayOfMonth.toString(),
-                                    color = if (isSelected) Color.White else Color.Black
+                                    color = if (isSelected) Color.White else Color.Black,
+                                    fontWeight = FontWeight.Bold
                                 )
                             }
                         } else {
-                            Spacer(modifier = Modifier.size(40.dp))
+                            Spacer(modifier = Modifier.size(48.dp))
                         }
                     }
                 }

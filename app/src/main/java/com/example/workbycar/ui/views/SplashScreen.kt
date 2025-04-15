@@ -50,7 +50,7 @@ fun Splash(){
         }
         .build()
 
-    val gifUri = remember { Uri.parse("android.resource://${context.packageName}/drawable/coche") }
+    val gifUri = remember { Uri.parse("android.resource://${context.packageName}/raw/coche") }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -60,7 +60,7 @@ fun Splash(){
         AsyncImage(
             imageLoader = imageLoader,
             model = gifUri,
-            contentDescription = "Logo coche",
+            contentDescription = "Car logo",
             modifier = Modifier.size(150.dp, 150.dp))
         Text("Welcome!!",
             fontSize = 30.sp,
