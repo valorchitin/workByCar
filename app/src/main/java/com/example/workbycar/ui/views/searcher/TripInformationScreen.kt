@@ -315,7 +315,8 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
                         modifier = Modifier.clickable {
                             chatsViewModel.openOrCreateChat(
                                 searcherViewModel.userId,
-                                searcherViewModel.selectedTrip!!.uid
+                                searcherViewModel.selectedTrip!!.uid,
+                                searcherViewModel.selectedTrip!!.tripId
                             ) { chatId ->
                                 // lógica adicional opcional
                             }
