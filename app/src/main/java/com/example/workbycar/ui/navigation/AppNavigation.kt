@@ -150,7 +150,7 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             MessagesScreen(navController, searcherViewModel, chatsViewModel)
         }
         composable(AppScreens.ChatScreen.route) {
-            ChatScreen(navController, chatsViewModel)
+            ChatScreen(navController, chatsViewModel, searcherViewModel)
         }
     }
 }

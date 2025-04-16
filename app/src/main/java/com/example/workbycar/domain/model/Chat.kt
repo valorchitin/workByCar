@@ -7,4 +7,5 @@ data class Chat(
     val users: List<String> = emptyList(),
     val lastMessage: String = "",
     val timestamp: Timestamp = Timestamp.now(),
+    val relatedTrip: String = "",
 )

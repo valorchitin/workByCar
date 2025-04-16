@@ -1,8 +1,11 @@
 package com.example.workbycar.ui.views.messages
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,14 +42,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.example.workbycar.domain.model.Message
+import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.chats.ChatsViewModel
+import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel) {
+fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, searcherViewModel: SearcherViewModel) {
     val messages by chatsViewModel.messages.observeAsState(emptyList())
     var messageText by remember { mutableStateOf("") }
 
@@ -123,18 +130,59 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel) {
             }
         }
     ) { paddingValues ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .imePadding()
-                .navigationBarsPadding(),
-            reverseLayout = true
         ) {
-            items(messages.reversed()) { message ->
-                ChatBubble(message = message, isCurrentUser = message.senderId == chatsViewModel.currentUserId)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .zIndex(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "See associated trip",
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.primary,
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    modifier = Modifier
+                        .clickable {
+                            val tripId = chatsViewModel.selectedChat?.relatedTrip
+                            if (tripId != null) {
+                                chatsViewModel.loadRelatedTrip(
+                                    tripId = tripId,
+                                    onSuccess = { trip ->
+                                        searcherViewModel.selectedTrip = trip
+                                        navController.navigate("${AppScreens.TripInformationScreen.route}/false")
+                                    },
+                                    onError = { e ->
+                                        Log.e("LoadTrip", "Error loading trip: ${e.message}")
+                                    }
+                                )
+                            }
+                        }
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                )
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .imePadding()
+                    .navigationBarsPadding(),
+                reverseLayout = true
+            ) {
+                items(messages.reversed()) { message ->
+                    ChatBubble(message = message, isCurrentUser = message.senderId == chatsViewModel.currentUserId)
+                }
             }
         }
+
     }
 }
 
