@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.domain.model.Trip
@@ -50,9 +51,11 @@ fun TripsScreen(
     searcherViewModel: SearcherViewModel
 ) {
     val trips by userTripsViewModel.trips.observeAsState(emptyList())
+    val bookedTrips by userTripsViewModel.bookedTrips.observeAsState(emptyList())
 
     LaunchedEffect(Unit) {
         userTripsViewModel.LoadTrips()
+        userTripsViewModel.LoadBookedTrips()
     }
 
     Scaffold(
@@ -83,7 +86,7 @@ fun TripsScreen(
         },
         containerColor = Color(0xFFF5F5F5)
     ) { paddingValues ->
-        if (trips.isEmpty()) {
+        if (trips.isEmpty() && bookedTrips.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -102,8 +105,63 @@ fun TripsScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                items(trips) { trip ->
-                    TripCard(trip, navController, searcherViewModel)
+                item {
+                    Text(
+                        text = "My booked trips",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                if (bookedTrips.isNotEmpty()){
+                    items(bookedTrips) { trip ->
+                        TripCard(trip, navController, searcherViewModel)
+                    }
+                } else {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No trips yet",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+                }
+                item {
+                    Text(
+                        text = "My posted trips",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                }
+                if (trips.isNotEmpty()){
+                    items(trips) { trip ->
+                        TripCard(trip, navController, searcherViewModel)
+                    }
+                } else {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(paddingValues),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No trips yet",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.Gray
+                            )
+                        }
+                    }
                 }
             }
         }
