@@ -22,6 +22,8 @@ import com.example.workbycar.domain.repository.AuthRepository
 import com.example.workbycar.utils.CallBackHandle
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,7 +46,12 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
     private val _messages = MutableLiveData<List<Message>>()
     val messages: LiveData<List<Message>> = _messages
 
-    fun openOrCreateChat(currentUserId: String, otherUserId: String, tripId: String, onChatOpened: (String) -> Unit) {
+    fun openOrCreateChat(
+        currentUserId: String,
+        otherUserId: String,
+        tripId: String,
+        onChatOpened: (Chat) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
 
         db.collection("chats")
@@ -57,7 +64,8 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
                 }
 
                 if (existingChat != null) {
-                    onChatOpened(existingChat.id)
+                    val chat = existingChat.toChatObject(existingChat.id)
+                    onChatOpened(chat)
                 } else {
                     val newChatRef = db.collection("chats").document()
                     val newChatId = newChatRef.id
@@ -69,22 +77,49 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
                         "relatedTrip" to tripId
                     )
 
-                    newChatRef.set(newChat).addOnSuccessListener {
-                        if (currentUserId.isNotBlank() && otherUserId.isNotBlank()) {
-                            db.collection("usuarios").document(currentUserId)
-                                .update("chats", com.google.firebase.firestore.FieldValue.arrayUnion(newChatId))
-                                .addOnFailureListener { e -> Log.e("Firestore", "Error updating user chat list", e) }
-
-                            db.collection("usuarios").document(otherUserId)
-                                .update("chats", com.google.firebase.firestore.FieldValue.arrayUnion(newChatId))
-                                .addOnFailureListener { e -> Log.e("Firestore", "Error updating user chat list", e) }
-                        } else {
-                            Log.e("ChatsViewModel", "User ID is empty, cannot create chat")
+                    newChatRef.set(newChat)
+                        .addOnSuccessListener {
+                            val chat = newChatRef.get().result?.toChatObject(newChatId)
+                            if (chat != null) {
+                                updateUserChats(currentUserId, newChatId)
+                                updateUserChats(otherUserId, newChatId)
+                                onChatOpened(chat)
+                            }
                         }
-                        onChatOpened(newChatId)
-                    }
+                        .addOnFailureListener { e ->
+                            Log.e("Firestore", "Error creating chat: ${e.message}")
+                        }
                 }
             }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error fetching chats: ${e.message}")
+            }
+    }
+
+    private fun DocumentSnapshot.toChatObject(chatId: String): Chat {
+        val users = get("users") as List<String>
+        val lastMessage = get("lastMessage") as? String
+        val timestamp = get("timestamp") as? Timestamp
+        val relatedTrip = get("relatedTrip") as String
+
+        return Chat(
+            id = chatId,
+            users = users,
+            lastMessage = lastMessage ?: "",
+            timestamp = timestamp ?: Timestamp.now(),
+            relatedTrip = relatedTrip
+        )
+    }
+
+    private fun updateUserChats(userId: String, chatId: String) {
+        val db = FirebaseFirestore.getInstance()
+        if (userId.isNotBlank()) {
+            db.collection("usuarios").document(userId)
+                .update("chats", FieldValue.arrayUnion(chatId))
+                .addOnFailureListener { e -> Log.e("Firestore", "Error updating user chat list: ${e.message}") }
+        } else {
+            Log.e("ChatsViewModel", "User ID is empty, cannot update chat list")
+        }
     }
 
     fun loadEveryChats() {

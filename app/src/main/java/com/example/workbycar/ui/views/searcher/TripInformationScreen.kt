@@ -77,7 +77,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ReservationButton(searcherViewModel)
+            ReservationButton(searcherViewModel, navController)
         }
     }) { paddingValues ->
         LazyColumn (
@@ -104,7 +104,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
                 )
             }
             item {
-                ThirdSection(searcherViewModel, chatsViewModel, isMyTrip)
+                ThirdSection(searcherViewModel, chatsViewModel, isMyTrip, navController)
             }
         }
     }
@@ -228,7 +228,7 @@ fun SecondSection(searcherViewModel: SearcherViewModel){
 }
 
 @Composable
-fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, isMyTrip: Boolean){
+fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, isMyTrip: Boolean, navController: NavController){
     Column {
         Row(
             modifier = Modifier
@@ -317,8 +317,9 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
                                 searcherViewModel.userId,
                                 searcherViewModel.selectedTrip!!.uid,
                                 searcherViewModel.selectedTrip!!.tripId
-                            ) { chatId ->
-                                // lógica adicional opcional
+                            ) { chat ->
+                                chatsViewModel.selectedChat = chat
+                                navController.navigate(AppScreens.ChatScreen.route)
                             }
                         }
                     ) {
@@ -341,11 +342,12 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
 }
 
 @Composable
-fun ReservationButton(searcherViewModel: SearcherViewModel){
+fun ReservationButton(searcherViewModel: SearcherViewModel, navController: NavController){
     if (searcherViewModel.selectedTrip!!.automatedReservation){
         Button(
             onClick = {
                 searcherViewModel.bookASeat()
+                navController.navigate(AppScreens.TripsScreen.route)
             },
             enabled = searcherViewModel.selectedTrip!!.passengers.size != searcherViewModel.selectedTrip!!.passengersNumber,
             modifier = Modifier
