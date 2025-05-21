@@ -169,7 +169,7 @@ fun ChatElement(chat: Chat, chatsViewModel: ChatsViewModel, navController: NavCo
             }
 
             Text(
-                text = chatsViewModel.formatTimestampWhatsAppStyle(chat.timestamp),
+                text = chatsViewModel.formatTimestamp(chat.timestamp),
                 style = MaterialTheme.typography.bodySmall,
                 color = Color.Gray
             )

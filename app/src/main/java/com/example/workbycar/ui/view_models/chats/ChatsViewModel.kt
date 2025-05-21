@@ -178,7 +178,7 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun formatTimestampWhatsAppStyle(timestamp: Timestamp): String {
+    fun formatTimestamp(timestamp: Timestamp): String {
         val messageDateTime = timestamp.toDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
         val messageDate = messageDateTime.toLocalDate()
         val today = LocalDate.now()

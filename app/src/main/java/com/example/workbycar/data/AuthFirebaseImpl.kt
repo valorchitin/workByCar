@@ -1,6 +1,5 @@
 package com.example.workbycar.data
 
-import com.example.workbycar.domain.model.Trip
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
 import com.example.workbycar.utils.CallBackHandle

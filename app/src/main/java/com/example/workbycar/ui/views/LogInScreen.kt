@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +33,11 @@ import com.example.workbycar.ui.view_models.LoginViewModel
 @Composable
 fun LogInScreen(navController: NavController, loginViewModel: LoginViewModel){
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        loginViewModel.email = ""
+        loginViewModel.password = ""
+    }
 
     Column (modifier = Modifier
         .fillMaxSize()
