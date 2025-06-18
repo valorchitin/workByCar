@@ -60,7 +60,8 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
             .addOnSuccessListener { documents ->
                 val existingChat = documents.documents.find { doc ->
                     val users = doc.get("users") as List<String>
-                    users.contains(otherUserId)
+                    val trip = doc.get("relatedTrip") as String
+                    users.contains(otherUserId) && trip == tripId
                 }
 
                 if (existingChat != null) {
@@ -79,12 +80,17 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
 
                     newChatRef.set(newChat)
                         .addOnSuccessListener {
-                            val chat = newChatRef.get().result?.toChatObject(newChatId)
-                            if (chat != null) {
-                                updateUserChats(currentUserId, newChatId)
-                                updateUserChats(otherUserId, newChatId)
-                                onChatOpened(chat)
-                            }
+                            newChatRef.get()
+                                .addOnSuccessListener { documentSnapshot ->
+                                    val chat = documentSnapshot.toChatObject(newChatId)
+
+                                    updateUserChats(currentUserId, newChatId)
+                                    updateUserChats(otherUserId, newChatId)
+                                    onChatOpened(chat)
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.e("Firestore", "Error fetching new chat document: ${e.message}")
+                                }
                         }
                         .addOnFailureListener { e ->
                             Log.e("Firestore", "Error creating chat: ${e.message}")

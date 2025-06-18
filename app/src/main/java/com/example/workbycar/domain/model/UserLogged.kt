@@ -8,6 +8,7 @@ data class UserLogged(
     val birthDate: Long?,
     val prefix: String = "",
     val phone: String = "",
+    val description: String = "",
 ){
-    constructor() : this("", "", "", "", null, "", "")
+    constructor() : this("", "", "", "", null, "", "", "")
 }

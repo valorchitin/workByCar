@@ -1,6 +1,8 @@
 package com.example.workbycar.ui.views.messages
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,11 +52,13 @@ import androidx.navigation.NavController
 import com.example.workbycar.domain.model.Message
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.chats.ChatsViewModel
+import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, searcherViewModel: SearcherViewModel) {
+fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, searcherViewModel: SearcherViewModel, profileViewModel: ProfileViewModel) {
     val messages by chatsViewModel.messages.observeAsState(emptyList())
     var messageText by remember { mutableStateOf("") }
 
@@ -66,6 +71,12 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
             TopAppBar(
                 title = {
                     Row(
+                        modifier = Modifier
+                            .clickable {
+                                println(searcherViewModel.driver)
+                                profileViewModel.selectedUser = chatsViewModel.selectedUser
+                                navController.navigate(AppScreens.UserInfoScreen.route)
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
@@ -89,6 +100,11 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
                             text = "${chatsViewModel.selectedUser?.name} ${chatsViewModel.selectedUser?.surname}",
                             style = MaterialTheme.typography.headlineMedium,
                             color = MaterialTheme.colorScheme.primary
+                        )
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = "Select location",
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -157,6 +173,8 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
                                     tripId = tripId,
                                     onSuccess = { trip ->
                                         searcherViewModel.selectedTrip = trip
+                                        searcherViewModel.getDriver()
+                                        searcherViewModel.getPassengers()
                                         navController.navigate("${AppScreens.TripInformationScreen.route}/false")
                                     },
                                     onError = { e ->

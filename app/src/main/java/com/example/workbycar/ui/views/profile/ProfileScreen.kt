@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cake
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Button
@@ -63,6 +64,8 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
     val formattedBirthDate = user?.birthDate?.let {
         dateFormat.format(Date(it))
     } ?: "Fecha no válida"
+    val description = user!!.description
+        .takeIf { it.isNotEmpty() } ?: "Not description yet"
 
     Scaffold(
         topBar = {
@@ -114,6 +117,7 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
                             TextInfo(Icons.Default.Person, "Name", user.name)
                             TextInfo(Icons.Default.Person, "Surname", user.surname)
                             TextInfo(Icons.Default.Cake, "Birthdate", formattedBirthDate)
+                            TextInfo(Icons.Default.Info, "Description", description)
                             TextInfo(Icons.Default.Phone, "Phone", "${user.prefix} ${user.phone}")
                             TextInfo(Icons.Default.Email, "Email", user.email)
                         }

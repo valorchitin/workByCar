@@ -8,4 +8,12 @@ data class CallBackHandle<T>(
     val onError: (ErrorData?) -> Unit
 )
 
-data class ErrorData(val code: String, val message: String)
+data class ErrorData(
+    val code: String = "UNKNOWN_ERROR",
+    val message: String
+) {
+    constructor(exception: Exception) : this(
+        code = exception::class.simpleName ?: "UNKNOWN_EXCEPTION",
+        message = exception.localizedMessage ?: "Ha ocurrido un error desconocido"
+    )
+}

@@ -102,6 +102,15 @@ fun SignUpScreen(navController: NavController, signUpViewModel: SignUpViewModel)
             Spacer(modifier = Modifier.height(32.dp))
         }
         item {
+            Text(
+                text = "Description:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+            DescriptionTextFile(signUpViewModel)
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+        item {
             ButtonSignUp(signUpViewModel, context, navController)
         }
     }
@@ -247,6 +256,23 @@ fun DatePickerModal(
     ) {
         DatePicker(state = datePickerState)
     }
+}
+
+@Composable
+fun DescriptionTextFile(signUpViewModel: SignUpViewModel){
+    TextField(
+        value = signUpViewModel.description,
+        onValueChange = { signUpViewModel.description = it },
+        label = { Text("Name") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 0.dp,
+                color = Color.White,
+                shape = CutCornerShape(5.dp)
+            )
+    )
 }
 
 @Composable

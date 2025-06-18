@@ -23,6 +23,7 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
     var birthDate by mutableStateOf<Long?>(null)
+    var description by mutableStateOf("")
     var prefix by mutableStateOf("")
     var phone by mutableStateOf("")
     var currentUser by mutableStateOf<UserLogged?>(null)
@@ -35,6 +36,7 @@ class SignUpViewModel @Inject constructor(private val authRepository: AuthReposi
                 name,
                 surname,
                 birthDate,
+                description,
                 prefix,
                 phone,
                 CallBackHandle(
