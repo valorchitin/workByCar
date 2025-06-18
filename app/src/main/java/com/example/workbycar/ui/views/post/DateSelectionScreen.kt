@@ -199,6 +199,8 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
                                 date in startOfWeek..endOfWeek
                             } ?: true
 
+                            val isEnabled = isWithinAllowedRange && !date.isBefore(LocalDate.now())
+
                             Box(
                                 modifier = Modifier
                                     .size(48.dp)
@@ -214,7 +216,7 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
                                         shape = CircleShape
                                     )
                                     .clickable(
-                                        enabled = isWithinAllowedRange,
+                                        enabled = isEnabled,
                                         onClick = {
                                             val updatedDates = postTripsViewModel.dates.toMutableSet()
                                             if (isSelected) {
@@ -235,9 +237,14 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
                             ) {
                                 Text(
                                     text = dayOfMonth.toString(),
-                                    color = if (isSelected) Color.White else Color.Black,
+                                    color = when {
+                                        isSelected -> Color.White
+                                        !isEnabled -> Color.Gray
+                                        else -> Color.Black
+                                    },
                                     fontWeight = FontWeight.Bold
                                 )
+
                             }
                         } else {
                             Spacer(modifier = Modifier.size(48.dp))

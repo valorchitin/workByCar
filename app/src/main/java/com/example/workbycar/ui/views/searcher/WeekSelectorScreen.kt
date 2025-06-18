@@ -16,14 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -158,6 +155,9 @@ fun MultiSelectCalendar(searcherViewModel: SearcherViewModel) {
         val firstDayOfWeek = LocalDate.of(currentMonth.value.year, currentMonth.value.month, 1).dayOfWeek.value
 
         LazyColumn {
+            val today = LocalDate.now()
+            val currentWeekStart = today.minusDays(today.dayOfWeek.value.toLong() - 1)
+
             items((daysInMonth + firstDayOfWeek - 1) / 7 + 1) { week ->
                 Row(
                     modifier = Modifier
@@ -175,30 +175,46 @@ fun MultiSelectCalendar(searcherViewModel: SearcherViewModel) {
                             val isSelectedWeek = selectedWeekStart.value != null &&
                                     startOfWeek == selectedWeekStart.value
 
+                            val isDisabledWeek = startOfWeek.isBefore(currentWeekStart)
+
                             Box(
                                 modifier = Modifier
                                     .size(48.dp)
                                     .clip(CircleShape)
                                     .background(
-                                        if (isSelectedWeek) Color(0xFF0277BD) else Color.Transparent,
+                                        when {
+                                            isSelectedWeek -> Color(0xFF0277BD)
+                                            else -> Color.Transparent
+                                        },
                                         shape = CircleShape
                                     )
                                     .border(
                                         width = 2.dp,
-                                        color = if (isSelectedWeek) Color(0xFF0277BD) else Color.Gray,
+                                        color = when {
+                                            isSelectedWeek -> Color(0xFF0277BD)
+                                            isDisabledWeek -> Color.LightGray
+                                            else -> Color.Gray
+                                        },
                                         shape = CircleShape
                                     )
-                                    .clickable {
-                                        selectedWeekStart.value = startOfWeek
-                                        searcherViewModel.searcherStartOfWeek = startOfWeek
-                                        searcherViewModel.searcherEndOfWeek = endOfWeek
-                                    },
+                                    .clickable(
+                                        enabled = !isDisabledWeek,
+                                        onClick = {
+                                            selectedWeekStart.value = startOfWeek
+                                            searcherViewModel.searcherStartOfWeek = startOfWeek
+                                            searcherViewModel.searcherEndOfWeek = endOfWeek
+                                        }
+                                    ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = dayOfMonth.toString(),
                                     fontWeight = FontWeight.Medium,
-                                    color = if (isSelectedWeek) Color.White else Color.Black
+                                    color = when {
+                                        isSelectedWeek -> Color.White
+                                        isDisabledWeek -> Color.Gray
+                                        else -> Color.Black
+                                    }
                                 )
                             }
                         } else {

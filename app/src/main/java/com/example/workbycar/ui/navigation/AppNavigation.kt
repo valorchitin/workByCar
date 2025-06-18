@@ -36,6 +36,7 @@ import com.example.workbycar.ui.views.post.StartTripScreen
 import com.example.workbycar.ui.views.post.TripPostingScreen
 import com.example.workbycar.ui.views.profile.EditUserInfoScreen
 import com.example.workbycar.ui.views.profile.ProfileScreen
+import com.example.workbycar.ui.views.profile.UserInfoScreen
 import com.example.workbycar.ui.views.searcher.FoundTripsScreen
 import com.example.workbycar.ui.views.searcher.MapScreen
 import com.example.workbycar.ui.views.searcher.PlaceSelectorScreen
@@ -88,7 +89,7 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             arguments = listOf(navArgument("isMyTrip") { type = NavType.BoolType })
         ){ backStackEntry ->
             val isMyTrip = backStackEntry.arguments?.getBoolean("isMyTrip") ?: false
-            TripInformationScreen(navController, searcherViewModel, chatsViewModel, isMyTrip)
+            TripInformationScreen(navController, searcherViewModel, chatsViewModel, profileViewModel, isMyTrip)
         }
         composable(
             route = "${AppScreens.MapScreen.route}/{isOrigin}",
@@ -105,6 +106,9 @@ fun AppNavigation(loginViewModel: LoginViewModel,
         }
         composable(AppScreens.EditUserInfoScreen.route) {
             EditUserInfoScreen(navController, profileViewModel)
+        }
+        composable(AppScreens.UserInfoScreen.route) {
+            UserInfoScreen(navController, profileViewModel)
         }
         composable(AppScreens.StartTripScreen.route) {
             StartTripScreen(navController, postTripsViewModel)
@@ -149,7 +153,7 @@ fun AppNavigation(loginViewModel: LoginViewModel,
             MessagesScreen(navController, searcherViewModel, chatsViewModel)
         }
         composable(AppScreens.ChatScreen.route) {
-            ChatScreen(navController, chatsViewModel, searcherViewModel)
+            ChatScreen(navController, chatsViewModel, searcherViewModel, profileViewModel)
         }
     }
 }

@@ -7,7 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -108,6 +107,15 @@ fun EditUserInfoContent(modifier: Modifier = Modifier, profileViewModel: Profile
         }
         item {
             Text(
+                text = "Description:",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            DescriptionTextView(profileViewModel)
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        item {
+            Text(
                 text = "Phone prefix:",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
@@ -159,6 +167,18 @@ fun SurnameTextView(profileViewModel: ProfileViewModel){
         value = profileViewModel.surname,
         onValueChange = { profileViewModel.surname = it },
         label = { Text("Surname") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun DescriptionTextView(profileViewModel: ProfileViewModel){
+    TextField(
+        value = profileViewModel.description,
+        onValueChange = { profileViewModel.description = it },
+        label = { Text("Name") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
         modifier = Modifier.fillMaxWidth()
     )
@@ -307,7 +327,7 @@ fun PhoneTextView(profileViewModel: ProfileViewModel) {
 @Composable
 fun SaveChangesButton(profileViewModel: ProfileViewModel, context: Context, navController: NavController){
     Button(onClick = {
-        profileViewModel.editUserInfo(profileViewModel.name, profileViewModel.surname, profileViewModel.birthDate, profileViewModel.prefix, profileViewModel.phone)
+        profileViewModel.editUserInfo(profileViewModel.name, profileViewModel.surname, profileViewModel.birthDate, profileViewModel.description, profileViewModel.prefix, profileViewModel.phone)
         Toast.makeText(context, "Saved correctly", Toast.LENGTH_LONG).show()
         navController.navigate(AppScreens.ProfileScreen.route)
     }) {

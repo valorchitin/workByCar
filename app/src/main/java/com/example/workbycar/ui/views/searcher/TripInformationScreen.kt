@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
 import com.example.workbycar.ui.view_models.chats.ChatsViewModel
+import com.example.workbycar.ui.view_models.profile.ProfileViewModel
 import com.example.workbycar.ui.view_models.searcher.SearcherViewModel
 import java.time.LocalDate
 import java.time.LocalTime
@@ -58,7 +59,7 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripInformationScreen(navController: NavController, searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, isMyTrip: Boolean) {
+fun TripInformationScreen(navController: NavController, searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, profileViewModel: ProfileViewModel, isMyTrip: Boolean) {
     LaunchedEffect (Unit) {
         searcherViewModel.getUserId()
     }
@@ -104,7 +105,7 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
                 )
             }
             item {
-                ThirdSection(searcherViewModel, chatsViewModel, isMyTrip, navController)
+                ThirdSection(searcherViewModel, chatsViewModel, profileViewModel, isMyTrip, navController)
             }
         }
     }
@@ -227,15 +228,17 @@ fun SecondSection(searcherViewModel: SearcherViewModel){
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, isMyTrip: Boolean, navController: NavController){
+fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsViewModel, profileViewModel: ProfileViewModel, isMyTrip: Boolean, navController: NavController){
     Column {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
                 .clickable {
-                    println(searcherViewModel.driver)
+                    profileViewModel.selectedUser = searcherViewModel.driver
+                    navController.navigate(AppScreens.UserInfoScreen.route)
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -253,6 +256,40 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
                 contentDescription = "Select location",
                 tint = MaterialTheme.colorScheme.primary
             )
+        }
+        if (searcherViewModel.passengers.isNotEmpty()) {
+            Text(
+                text = "Passengers:",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
+            )
+
+            searcherViewModel.passengers.forEach { passenger ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .clickable {
+                            profileViewModel.selectedUser = passenger
+                            navController.navigate(AppScreens.UserInfoScreen.route)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "${passenger.name} ${passenger.surname}",
+                        fontSize = 18.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = "View passenger",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+        } else {
+            print(searcherViewModel.passengers)
         }
         HorizontalDivider(
             modifier = Modifier.padding(16.dp),
@@ -319,6 +356,8 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
                                 searcherViewModel.selectedTrip!!.tripId
                             ) { chat ->
                                 chatsViewModel.selectedChat = chat
+                                chatsViewModel.selectedUser = searcherViewModel.driver
+                                chatsViewModel.currentUserId = searcherViewModel.userId
                                 navController.navigate(AppScreens.ChatScreen.route)
                             }
                         }

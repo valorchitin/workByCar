@@ -3,6 +3,7 @@ package com.example.workbycar.data
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
 import com.example.workbycar.utils.CallBackHandle
+import com.example.workbycar.utils.ErrorData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.inject.Inject
@@ -19,6 +20,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                     val name = user.getString("name") ?: ""
                     val surname = user.getString("surname") ?: ""
                     val birthDate = user.getLong("birthDate")
+                    val description = user.getString("description") ?: ""
                     val prefix = user.getString("prefix") ?: ""
                     val phone = user.getString("phone") ?: ""
 
@@ -28,13 +30,14 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                         name = name,
                         surname = surname,
                         birthDate = birthDate,
+                        description = description,
                         prefix = prefix,
                         phone = phone,
                     )
                     callBack.onSuccess.invoke(userLogged)
                 }
         } catch (e: Exception) {
-            callBack.onError.invoke(null)
+            callBack.onError.invoke(ErrorData(e))
         }
     }
 
@@ -48,7 +51,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                 callBack.onSuccess.invoke(it.isSuccessful)
             }
         } catch (e: Exception) {
-            callBack.onError.invoke(null)
+            callBack.onError.invoke(ErrorData(e))
         }
     }
 
@@ -57,7 +60,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
             firebaseAuth.signOut()
             callBack.onSuccess(true)
         } catch (e: Exception) {
-            callBack.onError.invoke(null)
+            callBack.onError.invoke(ErrorData(e))
         }
     }
 
@@ -67,6 +70,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
         name: String,
         surname: String,
         birthDate: Long?,
+        description: String,
         prefix: String,
         phone: String,
         callBack: CallBackHandle<Boolean>
@@ -80,6 +84,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                             "name" to name,
                             "surname" to surname,
                             "birthDate" to birthDate,
+                            "description" to description,
                             "prefix" to prefix,
                             "phone" to phone
                         )
@@ -99,7 +104,7 @@ class AuthFirebaseImpl @Inject constructor(private val firebaseAuth: FirebaseAut
                 }
             }
         } catch (e: Exception){
-            callBack.onError.invoke(null)
+            callBack.onError.invoke(ErrorData(e))
         }
     }
 }

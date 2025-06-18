@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.workbycar.domain.model.UserLogged
 import com.example.workbycar.domain.repository.AuthRepository
@@ -29,8 +28,12 @@ class ProfileViewModel @Inject constructor(private val authRepository: AuthRepos
     var name by mutableStateOf("")
     var surname by mutableStateOf("")
     var birthDate by mutableStateOf<Long?>(null)
+    var description by mutableStateOf("")
     var prefix by mutableStateOf("")
     var phone by mutableStateOf("")
+
+    var selectedUserId by mutableStateOf("")
+    var selectedUser by mutableStateOf<UserLogged?>(null)
 
     init {
         userInfo()
@@ -44,6 +47,7 @@ class ProfileViewModel @Inject constructor(private val authRepository: AuthRepos
                     name = user.name
                     surname = user.surname
                     birthDate = user.birthDate
+                    description = user.description
                     prefix = user.prefix
                     phone = user.phone
                 },
@@ -54,7 +58,7 @@ class ProfileViewModel @Inject constructor(private val authRepository: AuthRepos
         }
     }
 
-    fun editUserInfo(newName: String, newSurname: String, newBirthDate: Long?, newPrefix: String, newPhone: String){
+    fun editUserInfo(newName: String, newSurname: String, newBirthDate: Long?, newDescription: String, newPrefix: String, newPhone: String){
         viewModelScope.launch {
             currentUser?.let { user ->
                 FirebaseFirestore.getInstance()
@@ -64,6 +68,7 @@ class ProfileViewModel @Inject constructor(private val authRepository: AuthRepos
                         "name", (newName),
                         "surname", (newSurname),
                         "birthDate", (newBirthDate),
+                        "description", (newDescription),
                         "prefix", (newPrefix),
                         "phone", (newPhone)
                     )
@@ -99,5 +104,15 @@ class ProfileViewModel @Inject constructor(private val authRepository: AuthRepos
                     }
                 }
         }
+    }
+
+    fun getUserById() {
+        FirebaseFirestore.getInstance()
+            .collection("usuarios")
+            .document(selectedUserId)
+            .get()
+            .addOnSuccessListener { document ->
+                selectedUser = document.toObject(UserLogged::class.java)
+            }
     }
 }

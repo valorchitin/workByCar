@@ -123,6 +123,7 @@ fun TripCard(trip: Trip, navController: NavController, searcherViewModel: Search
             .clickable {
                 searcherViewModel.selectedTrip = trip
                 searcherViewModel.getDriver()
+                searcherViewModel.getPassengers()
                 navController.navigate("${AppScreens.TripInformationScreen.route}/false")
             },
         shape = RoundedCornerShape(16.dp),

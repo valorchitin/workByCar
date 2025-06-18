@@ -61,6 +61,7 @@ class SearcherViewModel @Inject constructor(
     private var tripId by mutableStateOf("")
 
     var driver by mutableStateOf<UserLogged?>(null)
+    var passengers by mutableStateOf<List<UserLogged>>(emptyList())
 
     var userId by mutableStateOf("")
 
@@ -214,6 +215,28 @@ class SearcherViewModel @Inject constructor(
             .addOnSuccessListener { document ->
                 driver = document.toObject(UserLogged::class.java)
             }
+    }
+
+    fun getPassengers() {
+        val passengerList = mutableListOf<UserLogged>()
+
+        selectedTrip!!.passengers.forEach { passengerId ->
+            FirebaseFirestore.getInstance()
+                .collection("usuarios")
+                .document(passengerId)
+                .get()
+                .addOnSuccessListener { document ->
+                    document.toObject(UserLogged::class.java).let { passenger ->
+                        if (passenger != null) {
+                            passengerList.add(passenger)
+
+                            if (passengerList.size == passengerList.size) {
+                                passengers = passengerList
+                            }
+                        }
+                    }
+                }
+        }
     }
 
     fun bookASeat() {
