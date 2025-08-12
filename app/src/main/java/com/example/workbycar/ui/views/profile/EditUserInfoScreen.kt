@@ -178,7 +178,7 @@ fun DescriptionTextView(profileViewModel: ProfileViewModel){
     TextField(
         value = profileViewModel.description,
         onValueChange = { profileViewModel.description = it },
-        label = { Text("Name") },
+        label = { Text("Description") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
         modifier = Modifier.fillMaxWidth()
     )

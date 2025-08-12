@@ -105,7 +105,11 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
     private fun DocumentSnapshot.toChatObject(chatId: String): Chat {
         val users = get("users") as List<String>
         val lastMessage = get("lastMessage") as? String
-        val timestamp = get("timestamp") as? Timestamp
+        val timestamp = when (val ts = get("timestamp")) {
+            is Timestamp -> ts
+            is Long -> Timestamp(ts / 1000, ((ts % 1000) * 1_000_000).toInt())
+            else -> Timestamp.now()
+        }
         val relatedTrip = get("relatedTrip") as String
 
         return Chat(
