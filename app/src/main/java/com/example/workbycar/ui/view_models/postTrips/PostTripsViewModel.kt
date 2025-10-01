@@ -40,6 +40,7 @@ import kotlinx.coroutines.tasks.await
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -73,7 +74,7 @@ class PostTripsViewModel @Inject constructor(
         var endOfWeek by mutableStateOf<LocalDate?>(null)
 
         // Departure hour
-        var departureHour by mutableStateOf(LocalTime.now())
+        var departureHour by mutableStateOf(LocalTime.now().truncatedTo(ChronoUnit.MINUTES))
 
         // Passengers number
         var passengersNumber by mutableIntStateOf(3)
