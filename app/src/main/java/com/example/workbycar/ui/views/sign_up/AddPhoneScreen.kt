@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -150,6 +151,7 @@ fun PhoneCodeDropDown(signUpViewModel: SignUpViewModel) {
                     color = Color.White,
                     shape = CutCornerShape(5.dp)
                 )
+                .testTag("prefixDropdown")
         )
 
         ExposedDropdownMenu(
@@ -189,6 +191,7 @@ fun PhoneTextView(signUpViewModel: SignUpViewModel) {
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
             )
+            .testTag("phoneTextView")
     )
 }
 

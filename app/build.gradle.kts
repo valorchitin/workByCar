@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.example.workbycar"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.workbycar"
@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.places)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.navigation.testing.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
