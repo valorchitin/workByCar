@@ -16,7 +16,7 @@ class SignUpInstrumentedTest {
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun signUpFlow_navigatesToAddPhoneScreen() {
+    fun signUpFeatureTest() {
         // We wait for the SplashScreen to finish
         composeTestRule.waitUntil(timeoutMillis = 6000) {
             composeTestRule
@@ -67,7 +67,7 @@ class SignUpInstrumentedTest {
 
         // fill in phone number form
         composeTestRule.onNodeWithTag("prefixDropdown").performClick()
-        composeTestRule.onNode(hasScrollAction()) // Busca un nodo con scroll
+        composeTestRule.onNode(hasScrollAction())
             .performScrollToNode(hasText("Spain (+34)"))
         composeTestRule.onNodeWithText("Spain (+34)").performClick()
         composeTestRule.onNodeWithTag("phoneTextView").performTextInput("612345678")

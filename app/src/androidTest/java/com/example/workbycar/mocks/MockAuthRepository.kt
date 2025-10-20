@@ -12,14 +12,14 @@ class MockAuthRepository : AuthRepository {
     override fun getCurrentUser(callBack: CallBackHandle<UserLogged>) {
         getCurrentUserCalled = true
         val user = UserLogged(
-            uid = "123",
-            email = "test@test.com",
+            uid = "hjePaeSyJQeGBbnthSZzD8Crouy2",
+            email = "juanaedo@gmail.com",
             name = "Juan",
-            surname = "Pérez",
-            birthDate = 123456789L,
-            description = "Descripción",
+            surname = "Martínez aedo",
+            birthDate = 986860800000,
+            description = "Description about Juan ",
             prefix = "+34",
-            phone = "600123456"
+            phone = "123456789"
         )
         callBack.onSuccess(user)
     }

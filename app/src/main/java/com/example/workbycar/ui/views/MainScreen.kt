@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -165,7 +166,7 @@ fun ButtonMain(image: Int, imageDescription: String, modifier: Modifier, route: 
             navController.navigate(route = route)
         },
         shape = CutCornerShape(0),
-        modifier = modifier) {
+        modifier = modifier.testTag(imageDescription)) {
         Icon(
             painter = painterResource(id = image),
             contentDescription = imageDescription
