@@ -1,18 +1,18 @@
 package com.example.workbycar
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.hasParent
-import androidx.compose.ui.test.hasScrollAction
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -68,7 +68,7 @@ class ProfileInstrumentedTest {
         // Click on the profile button
         composeTestRule.onNodeWithTag("Profile").performClick()
 
-        // Click on the profile button
+        // Wait until redirect to profile section
         composeTestRule.waitUntil(timeoutMillis = 8000) {
             composeTestRule.onAllNodesWithText("User Profile").fetchSemanticsNodes().isNotEmpty()
         }
@@ -106,6 +106,12 @@ class ProfileInstrumentedTest {
         // Check that you are back on the profile screen and that the data has been updated.
         composeTestRule.waitUntil(timeoutMillis = 5000) {
             composeTestRule.onAllNodesWithText("User Profile").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        composeTestRule.waitUntil(timeoutMillis = 8000) {
+            val nodes = composeTestRule.onAllNodesWithTag("Name").fetchSemanticsNodes()
+            nodes.isNotEmpty() && nodes.first().config.getOrNull(SemanticsProperties.Text)
+                ?.joinToString("")?.contains("Juana") == true
         }
 
         composeTestRule.onNodeWithTag("Name").assertTextContains("Juana")
@@ -163,5 +169,62 @@ class ProfileInstrumentedTest {
 
         // Check that we are logged in
         composeTestRule.onNodeWithText("Sign In").assertIsDisplayed()
+    }
+
+    @Test
+    fun deleteAccountTest() {
+        composeTestRule.waitUntil(timeoutMillis = 6000) {
+            composeTestRule
+                .onAllNodesWithText("Sign In")
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+
+        // Fill in the login form
+        composeTestRule.onNodeWithTag("emailTestView").performTextInput("user@test.com")
+        composeTestRule.onNodeWithTag("passwordTextView").performTextInput("123456")
+
+        // Click on the Sign In button
+        composeTestRule.onNodeWithText("Sign In").performClick()
+
+        // We wait for the Home page to load
+        composeTestRule.waitUntil(timeoutMillis = 8000) {
+            composeTestRule.onAllNodesWithText("Welcome\nJuan Perez").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        // Click on the profile button
+        composeTestRule.onNodeWithTag("Profile").performClick()
+
+        // Wait until redirect to profile section
+        composeTestRule.waitUntil(timeoutMillis = 8000) {
+            composeTestRule.onAllNodesWithText("User Profile").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        // Click on "Delete account" button
+        composeTestRule.onNodeWithText("Delete account").performClick()
+
+        // Wait until you return to the login screen
+        composeTestRule.waitUntil(timeoutMillis = 5000) {
+            composeTestRule.onAllNodesWithText("Sign In").fetchSemanticsNodes().isNotEmpty()
+        }
+
+        // fill in the login fields again
+        composeTestRule.onNodeWithTag("emailTestView").performTextClearance()
+        composeTestRule.onNodeWithTag("passwordTextView").performTextClearance()
+
+        composeTestRule.onNodeWithTag("emailTestView").performTextInput("user@test.com")
+        composeTestRule.onNodeWithTag("passwordTextView").performTextInput("123456")
+        composeTestRule.onNodeWithText("Sign In").performClick()
+
+        // Wait a bit and verify that it does NOT access the Home
+        composeTestRule.waitUntil(timeoutMillis = 5000) {
+            composeTestRule
+                .onAllNodesWithText("Sign In")
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+
+        // Verify that the text "Welcome" does NOT appear
+        composeTestRule.onAllNodesWithText("Welcome").assertCountEquals(0)
     }
 }

@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -203,6 +204,7 @@ fun MultiSelectCalendar(postTripsViewModel: PostTripsViewModel) {
 
                             Box(
                                 modifier = Modifier
+                                    .testTag("day_$dayOfMonth")
                                     .size(48.dp)
                                     .padding(4.dp)
                                     .clip(CircleShape)
