@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -80,7 +81,7 @@ fun TripPostingScreen(navController: NavController, postTripsViewModel: PostTrip
                         postTripsViewModel.description = newDescription
                     },
                     label = { Text("Do you have flexibility regarding the pick-up location and time? Are you not traveling on the highway? Is your trunk space limited? Keep your passengers informed.") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().testTag("textFieldDescription")
                 )
             }
 

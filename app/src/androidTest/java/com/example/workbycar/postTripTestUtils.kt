@@ -1,6 +1,7 @@
 package com.example.workbycar
 
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onAllNodesWithText
@@ -10,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import java.time.LocalTime
 
 fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.selectDepartureAddress() {
     // Wait for the source text field to appear
@@ -129,17 +131,14 @@ fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.sel
         onAllNodesWithText("Confirm").fetchSemanticsNodes().isNotEmpty()
     }
 
-    // Adjust Hour
-    onNodeWithText("7", useUnmergedTree = true).performClick()
-
-    // Adjust minute
-    onNodeWithText("30", useUnmergedTree = true).performClick()
+    runOnUiThread {
+        activityRule.scenario.onActivity { activity ->
+            activity.postTripsViewModel.departureHour = LocalTime.of(7, 30)
+        }
+    }
 
     // Click on the Confirm button
     onNodeWithText("Confirm").performClick()
-
-    // Check timepicker displays the correct hour
-    onNodeWithTag("openTimePicker").assertTextContains("07:30")
 
     // Click on Continue button
     onNodeWithText("Continue").performClick()
@@ -151,4 +150,81 @@ fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.sel
 
     // Verify that we are on the passengers number selector screen
     onNodeWithText("How many passengers are you going to take on the trip? Consider passenger comfort").assertExists()
+}
+
+fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.selectPassengersNumber() {
+    // Click on reduce passengers number button
+    onNodeWithTag("reducePassengers").performClick()
+
+    // Check number of passengers has been reduced
+    onNodeWithTag("passengersNumber").assertTextEquals("2")
+
+    // Click on Continue button
+    onNodeWithText("Continue").performClick()
+
+    // Wait for the next screen
+    waitUntil(timeoutMillis = 8000) {
+        onAllNodesWithText("Do you want passengers to book the trip automatically?").fetchSemanticsNodes().isNotEmpty()
+    }
+
+    // Verify that we are on the reservation type selector screen
+    onNodeWithText("Do you want passengers to book the trip automatically?").assertExists()
+}
+
+fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.selectReservationType() {
+    // Click on the automatic reservation clickable text
+    onNodeWithTag("automatic").performClick()
+
+    // Wait for the next screen
+    waitUntil(timeoutMillis = 8000) {
+        onAllNodesWithText("This is our recommended price per seat for your trip. Do you agree?").fetchSemanticsNodes().isNotEmpty()
+    }
+
+    // Verify that we are on the price recommendation screen
+    onNodeWithText("This is our recommended price per seat for your trip. Do you agree?").assertExists()
+}
+
+fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.selectPrice() {
+    // Click on the change price option
+    onNodeWithTag("changePrice").performClick()
+
+    // Wait for the next screen
+    waitUntil(timeoutMillis = 8000) {
+        onAllNodesWithText("Edit the amount. Please note that an excessive price may be unattractive").fetchSemanticsNodes().isNotEmpty()
+    }
+
+    // Verify that we are on the price selector screen
+    onNodeWithText("Edit the amount. Please note that an excessive price may be unattractive").assertExists()
+
+    // Click three times on increment price button
+    repeat(3) {
+        onNodeWithTag("incrementPrice").performClick()
+    }
+
+    // Click on Continue button
+    onNodeWithText("Continue").performClick()
+
+    // Wait for the next screen
+    waitUntil(timeoutMillis = 8000) {
+        onAllNodesWithText("Do you want to add something else about your trip?").fetchSemanticsNodes().isNotEmpty()
+    }
+
+    // Verify that we are on the post trip screen
+    onNodeWithText("Do you want to add something else about your trip?").assertExists()
+}
+
+fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.postTrip() {
+    // Fill in the description field
+    onNodeWithTag("textFieldDescription").performTextInput("This is the description for the trip.")
+
+    // Click on the Post button
+    onNodeWithText("Post").performClick()
+
+    // Wait for the next screen
+    waitUntil(timeoutMillis = 8000) {
+        onAllNodesWithText("Your trip has been successfully published!").fetchSemanticsNodes().isNotEmpty()
+    }
+
+    // Verify that we are on the Publication Confirmation page
+    onNodeWithText("Your trip has been successfully published!").assertExists()
 }

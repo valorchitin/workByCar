@@ -27,16 +27,17 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    val loginViewModel: LoginViewModel by viewModels()
+    val signUpViewModel: SignUpViewModel by viewModels()
+    val profileViewModel: ProfileViewModel by viewModels()
+    val postTripsViewModel: PostTripsViewModel by viewModels()
+    val userTripsViewModel: UserTripsViewModel by viewModels()
+    val searcherViewModel: SearcherViewModel by viewModels()
+    val chatsViewModel: ChatsViewModel by viewModels()
+
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
-        val loginViewModel: LoginViewModel by viewModels()
-        val signUpViewModel: SignUpViewModel by viewModels()
-        val profileViewModel: ProfileViewModel by viewModels()
-        val postTripsViewModel: PostTripsViewModel by viewModels()
-        val userTripsViewModel: UserTripsViewModel by viewModels()
-        val searcherViewModel: SearcherViewModel by viewModels()
-        val chatsViewModel: ChatsViewModel by viewModels()
         super.onCreate(savedInstanceState)
         Places.initialize(this, getString(R.string.google_maps_api_key))
         enableEdgeToEdge()
