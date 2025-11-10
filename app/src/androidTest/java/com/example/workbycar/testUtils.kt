@@ -27,15 +27,3 @@ fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.log
         onAllNodesWithText("Welcome\nJuan Martínez Aedo").fetchSemanticsNodes().isNotEmpty()
     }
 }
-
-fun AndroidComposeTestRule<*, *>.waitUntil(
-    timeoutMillis: Long = 5_000,
-    condition: () -> Boolean
-) {
-    val startTime = System.currentTimeMillis()
-    while (System.currentTimeMillis() - startTime < timeoutMillis) {
-        if (condition()) return
-        Thread.sleep(100)
-    }
-    throw AssertionError("Condition not met within $timeoutMillis ms")
-}

@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.navigation.AppScreens
@@ -90,7 +91,8 @@ fun PlaceTextView(modifier: Modifier, navController: NavController, searcherView
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, shape = RoundedCornerShape(8.dp)),
+                .background(Color.White, shape = RoundedCornerShape(8.dp))
+                .testTag("placeTextField"),
             shape = RoundedCornerShape(12.dp)
         )
 

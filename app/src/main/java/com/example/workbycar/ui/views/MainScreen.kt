@@ -272,7 +272,8 @@ fun SearchField(label: String, value: String, icon: ImageVector, onClick: () -> 
         label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .testTag(label),
         enabled = false,
         leadingIcon = {
             Icon(imageVector = icon, contentDescription = label, tint = Color.Gray)
