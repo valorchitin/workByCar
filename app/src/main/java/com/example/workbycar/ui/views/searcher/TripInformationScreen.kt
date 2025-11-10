@@ -40,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -391,7 +392,8 @@ fun ReservationButton(searcherViewModel: SearcherViewModel, navController: NavCo
             enabled = searcherViewModel.selectedTrip!!.passengers.size != searcherViewModel.selectedTrip!!.passengersNumber,
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("reservationButton"),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF0D47A1),
                 contentColor = Color.White

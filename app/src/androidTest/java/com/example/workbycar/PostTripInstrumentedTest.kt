@@ -6,7 +6,6 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
@@ -62,33 +61,33 @@ class PostTripInstrumentedTest {
         // Complete the process and check that the trip appears on the My Trips page.
         composeTestRule.onNodeWithTag("dontPostReturn").performClick()
 
-            // Wait for the next screen
+        // Wait for the next screen
         composeTestRule.waitUntil(timeoutMillis = 8000) {
             composeTestRule.onAllNodesWithText("Trips").fetchSemanticsNodes().isNotEmpty()
         }
 
-            // Verify that we are on the Publication Confirmation page
+        // Verify that we are on the Publication Confirmation page
         composeTestRule.onNodeWithText("Trips").assertExists()
 
         composeTestRule.waitUntil(timeoutMillis = 10000) {
             composeTestRule.onAllNodesWithText("My booked trips").fetchSemanticsNodes().isNotEmpty()
         }
 
-            // Scroll hasta el encabezado "My posted trips"
+        // Scroll to the heading "My posted trips"
         composeTestRule.onNodeWithTag("TripsList", useUnmergedTree = true)
             .performScrollToNode(hasText("My posted trips", ignoreCase = true))
 
-            // Esperar a que ese texto esté visible
+        // Wait until that text is visible
         composeTestRule.waitUntil(timeoutMillis = 5000) {
             composeTestRule.onAllNodesWithText("My posted trips", useUnmergedTree = true)
                 .fetchSemanticsNodes().isNotEmpty()
         }
 
-            // Scroll hasta la tarjeta del viaje
+        // Scroll to the travel card
         composeTestRule.onNodeWithTag("TripsList", useUnmergedTree = true)
             .performScrollToNode(hasText("Calle las Gardenias, Alcorcón, Spain", substring = true))
 
-            // Verificar que el viaje existe
+        // Verify that the trip exists
         val matchingNodes = composeTestRule
             .onAllNodesWithText(
                 "Calle las Gardenias, Alcorcón, Spain → Bertrandt Technology Spain, Avenida Leonardo Da Vinci, Getafe, Spain",
@@ -98,7 +97,7 @@ class PostTripInstrumentedTest {
             .fetchSemanticsNodes()
 
         assert(matchingNodes.isNotEmpty()) {
-            "No se encontró ningún viaje con el texto esperado"
+            "No trip was found with the expected text"
         }
     }
 }
