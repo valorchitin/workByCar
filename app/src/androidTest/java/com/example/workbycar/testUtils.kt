@@ -8,15 +8,15 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 
-fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.loginAsTestUser() {
+fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.loginAsTestUser(email: String, password: String, welcome: String) {
     // We wait for the SplashScreen to finish
     waitUntil(timeoutMillis = 6000) {
         onAllNodesWithText("Sign In").fetchSemanticsNodes().isNotEmpty()
     }
 
     // Fill in the login form
-    onNodeWithTag("emailTestView").performTextInput("juanaedo@gmail.com")
-    onNodeWithTag("passwordTextView").performTextInput("123456")
+    onNodeWithTag("emailTestView").performTextInput(email)
+    onNodeWithTag("passwordTextView").performTextInput(password)
 
     // Click on the Sign In button
     onNodeWithText("Sign In").performClick()
@@ -24,6 +24,6 @@ fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.log
     // We wait for the Home page to load
     // Check that the home page has been navigated to
     waitUntil(timeoutMillis = 8000) {
-        onAllNodesWithText("Welcome\nJuan Martínez Aedo").fetchSemanticsNodes().isNotEmpty()
+        onAllNodesWithText(welcome).fetchSemanticsNodes().isNotEmpty()
     }
 }

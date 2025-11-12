@@ -28,7 +28,7 @@ class ProfileInstrumentedTest {
 
     @Test
     fun profileVisualization() {
-        composeTestRule.loginAsTestUser()
+        composeTestRule.loginAsTestUser("juanaedo@gmail.com", "123456", "Welcome\nJuan Martínez Aedo")
 
         // Click on the profile button
         composeTestRule.onNodeWithTag("Profile").performClick()
@@ -63,7 +63,7 @@ class ProfileInstrumentedTest {
 
     @Test
     fun editUserInfoTest() {
-        composeTestRule.loginAsTestUser()
+        composeTestRule.loginAsTestUser("juanaedo@gmail.com", "123456", "Welcome\nJuan Martínez Aedo")
 
         // Click on the profile button
         composeTestRule.onNodeWithTag("Profile").performClick()
@@ -149,7 +149,7 @@ class ProfileInstrumentedTest {
 
     @Test
     fun logOutTest() {
-        composeTestRule.loginAsTestUser()
+        composeTestRule.loginAsTestUser("juanaedo@gmail.com", "123456", "Welcome\nJuan Martínez Aedo")
 
         // Click on the profile button
         composeTestRule.onNodeWithTag("Profile").performClick()

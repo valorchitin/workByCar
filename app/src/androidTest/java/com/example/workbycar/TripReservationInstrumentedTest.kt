@@ -26,25 +26,8 @@ class TripReservationInstrumentedTest {
 
     @Test
     fun tripReservation() {
-        // We wait for the SplashScreen to finish
-        composeTestRule.waitUntil(timeoutMillis = 6000) {
-            composeTestRule
-                .onAllNodesWithText("Sign In")
-                .fetchSemanticsNodes()
-                .isNotEmpty()
-        }
-
-        // Fill in the login form
-        composeTestRule.onNodeWithTag("emailTestView").performTextInput("diegogonzalez@gmail.com")
-        composeTestRule.onNodeWithTag("passwordTextView").performTextInput("123456")
-
-        // Click on the Sign In button
-        composeTestRule.onNodeWithText("Sign In").performClick()
-
-        // We wait for the Home page to load
-        composeTestRule.waitUntil(timeoutMillis = 8000) {
-            composeTestRule.onAllNodesWithText("Welcome\nDiego González Rodríguez").fetchSemanticsNodes().isNotEmpty()
-        }
+        // Login
+        composeTestRule.loginAsTestUser("diegogonzalez@gmail.com", "123456", "Welcome\nDiego González Rodríguez")
 
         // click on the origin field
         composeTestRule.onNodeWithTag("Origin").performClick()

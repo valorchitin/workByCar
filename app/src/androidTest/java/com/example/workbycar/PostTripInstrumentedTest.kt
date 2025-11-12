@@ -20,7 +20,7 @@ class PostTripInstrumentedTest {
 
     @Test
     fun postTripTest() {
-        composeTestRule.loginAsTestUser()
+        composeTestRule.loginAsTestUser("juanaedo@gmail.com", "123456", "Welcome\nJuan Martínez Aedo")
 
         // Click on the post trip button
         composeTestRule.onNodeWithTag("Post").performClick()

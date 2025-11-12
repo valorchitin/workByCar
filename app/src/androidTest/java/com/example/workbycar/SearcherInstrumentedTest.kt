@@ -30,7 +30,7 @@ class SearcherInstrumentedTest {
     @Test
     fun searchATrip() {
         // Login
-        composeTestRule.loginAsTestUser()
+        composeTestRule.loginAsTestUser("juanaedo@gmail.com", "123456", "Welcome\nJuan Martínez Aedo")
 
         // click on the origin field
         composeTestRule.onNodeWithTag("Origin").performClick()
