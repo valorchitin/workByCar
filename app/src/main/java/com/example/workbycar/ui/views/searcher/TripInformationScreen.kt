@@ -68,7 +68,10 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
         TopAppBar(
             title = { Text(text = "") },
             navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.testTag("closeTripInformation")
+                ) {
                     Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
                 }
             }
@@ -345,7 +348,7 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
                     ),
                     border = BorderStroke(2.dp, Color(0xFF0D47A1)),
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier.wrapContentWidth().testTag("contactButton")
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -445,5 +448,3 @@ fun ReservationButton(searcherViewModel: SearcherViewModel, navController: NavCo
         }
     }
 }
-
-

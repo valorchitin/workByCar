@@ -88,26 +88,26 @@ class SearcherInstrumentedTest {
             composeTestRule.onAllNodesWithContentDescription("Next month").fetchSemanticsNodes().isNotEmpty()
         }
 
-        // Ir al mes siguiente
+        // Go to the next month
         composeTestRule.onNodeWithContentDescription("Next month").performClick()
 
-        // Esperar a que se actualice el calendario
+        // Wait for the calendar to update
         composeTestRule.waitForIdle()
 
-        // Buscar el primer día disponible del mes siguiente
+        // Find the first available day of the following month
         val nextMonth = YearMonth.now().plusMonths(1)
         val firstDay = LocalDate.of(nextMonth.year, nextMonth.month, 1)
         val firstWeekStart = firstDay.minusDays(firstDay.dayOfWeek.value.toLong() - 1)
 
-        // Hacer click en el primer día del mes (activará la semana)
+        // Click on the first day of the month (this will activate the week)
         composeTestRule.onNodeWithTag("calendar_day_${firstDay}").performClick()
 
-        // Esperar que se active el botón Continue
+        // Wait for the Continue button to activate
         composeTestRule.waitUntil(timeoutMillis = 3000) {
             composeTestRule.onAllNodesWithText("Continue").fetchSemanticsNodes().isNotEmpty()
         }
 
-        // Pulsar el botón Continue
+        // Click on the continue button
         composeTestRule.onNodeWithText("Continue").performClick()
 
         // wait until redirect to the searcher screen

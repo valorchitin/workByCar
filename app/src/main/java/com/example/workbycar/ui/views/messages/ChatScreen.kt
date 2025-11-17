@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -76,7 +77,8 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
                                 println(searcherViewModel.driver)
                                 profileViewModel.selectedUser = chatsViewModel.selectedUser
                                 navController.navigate(AppScreens.UserInfoScreen.route)
-                            },
+                            }
+                            .testTag("userInfo"),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(
@@ -109,7 +111,10 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(
+                        onClick = { navController.popBackStack() },
+                        modifier = Modifier.testTag("arrowBack")
+                    ) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -128,7 +133,8 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
                     onValueChange = { messageText = it },
                     modifier = Modifier
                         .weight(1f)
-                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp)),
+                        .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
+                        .testTag("messageInput"),
                     placeholder = { Text("Write a message...", style = MaterialTheme.typography.bodyMedium) },
                     textStyle = MaterialTheme.typography.bodyLarge,
                     singleLine = true
@@ -139,7 +145,8 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
                             chatsViewModel.sendMessage(chatsViewModel.selectedChat!!.id, messageText)
                             messageText = ""
                         }
-                    }
+                    },
+                    modifier = Modifier.testTag("sendMessageButton")
                 ) {
                     Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
                 }
@@ -184,6 +191,7 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
                             }
                         }
                         .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .testTag("tripInfo")
                 )
             }
 

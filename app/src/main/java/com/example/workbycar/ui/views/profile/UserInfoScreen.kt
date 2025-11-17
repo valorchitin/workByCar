@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.workbycar.ui.view_models.profile.ProfileViewModel
@@ -59,9 +60,12 @@ fun UserInfoScreen(navController: NavController, profileViewModel: ProfileViewMo
         TopAppBar(
             title = { Text(text = "") },
             navigationIcon = {
-                IconButton(onClick = {
+                IconButton(
+                    onClick = {
                     navController.popBackStack()
-                }) {
+                    },
+                    modifier = Modifier.testTag("back")
+                ) {
                     Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
                 }
             }

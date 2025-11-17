@@ -60,9 +60,10 @@ fun FoundTripsScreen(navController: NavController, searcherViewModel: SearcherVi
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(
+                        onClick = { navController.popBackStack() },
+                        modifier = Modifier.testTag("closeFoundTrips")
+                    ) {
                         Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
                     }
                 },

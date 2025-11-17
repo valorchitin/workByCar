@@ -27,3 +27,20 @@ fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.log
         onAllNodesWithText(welcome).fetchSemanticsNodes().isNotEmpty()
     }
 }
+
+fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.checkUserInfo(name: String, surname: String, age: String, phone: String, description: String) {
+    onNodeWithText("Name").assertExists()
+    onNodeWithText(name, substring = true).assertExists()
+
+    onNodeWithText("Surname").assertExists()
+    onNodeWithText(surname, substring = true).assertExists()
+
+    onNodeWithText("Age").assertExists()
+    onNodeWithText(age, substring = true).assertExists()
+
+    onNodeWithText("Phone").assertExists()
+    onNodeWithText(phone, substring = true).assertExists()
+
+    onNodeWithText("Description").assertExists()
+    onNodeWithText(description, substring = true).assertExists()
+}
