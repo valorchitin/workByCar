@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -83,15 +84,15 @@ fun PriceRecommendationScreen(navController: NavController, postTripsViewModel: 
                     .align(Alignment.CenterHorizontally)
             )
 
-            ClickableText("Yes, perfect", true, navController)
-            ClickableText("I don't agree", false, navController)
+            ClickableText("Yes, perfect", true, navController, "acceptPrice")
+            ClickableText("I don't agree", false, navController, "changePrice")
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClickableText(text: String, agree: Boolean, navController: NavController) {
+fun ClickableText(text: String, agree: Boolean, navController: NavController, tag: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -101,7 +102,8 @@ fun ClickableText(text: String, agree: Boolean, navController: NavController) {
                 } else {
                     navController.navigate(AppScreens.PriceSelectorScreen.route)
                 }
-            },
+            }
+            .testTag(tag),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, Color(0xFF0277BD)),
         color = Color.White,

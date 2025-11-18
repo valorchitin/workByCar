@@ -52,6 +52,28 @@ class ChatsViewModel @Inject constructor(private val authRepository: AuthReposit
         tripId: String,
         onChatOpened: (Chat) -> Unit
     ) {
+        if (currentUserId.isNullOrBlank()) {
+            Log.w("ChatVM", "currentUserId vacío, recuperando usuario...")
+
+            authRepository.getCurrentUser(
+                CallBackHandle(
+                    onSuccess = { user ->
+                        // Llamada recursiva con el userId REAL
+                        openOrCreateChat(
+                            user.uid,
+                            otherUserId,
+                            tripId,
+                            onChatOpened
+                        )
+                    },
+                    onError = {
+                        Log.e("ChatVM", "Error obteniendo currentUserId: $it")
+                    }
+                )
+            )
+            return
+        }
+
         val db = FirebaseFirestore.getInstance()
 
         db.collection("chats")

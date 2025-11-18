@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -156,7 +157,7 @@ fun NameTextView(profileViewModel: ProfileViewModel){
         onValueChange = { profileViewModel.name = it },
         label = { Text("Name") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().testTag("Name")
     )
 }
 
@@ -168,7 +169,7 @@ fun SurnameTextView(profileViewModel: ProfileViewModel){
         onValueChange = { profileViewModel.surname = it },
         label = { Text("Surname") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().testTag("Surname")
     )
 }
 
@@ -180,7 +181,7 @@ fun DescriptionTextView(profileViewModel: ProfileViewModel){
         onValueChange = { profileViewModel.description = it },
         label = { Text("Description") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().testTag("Description")
     )
 }
 
@@ -286,6 +287,7 @@ fun PhoneCodeDropDown(profileViewModel: ProfileViewModel) {
                     color = Color.White,
                     shape = CutCornerShape(5.dp)
                 )
+                .testTag("prefixDropdown")
         )
 
         ExposedDropdownMenu(
@@ -319,7 +321,7 @@ fun PhoneTextView(profileViewModel: ProfileViewModel) {
         },
         label = { Text("Phone number") },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().testTag("Phone")
     )
 }
 

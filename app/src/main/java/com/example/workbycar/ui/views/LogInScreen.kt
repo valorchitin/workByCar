@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -99,6 +100,7 @@ fun EmailTextViewForLogIn(loginViewModel: LoginViewModel){
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
             )
+            .testTag("emailTestView")
     )
 }
 
@@ -115,7 +117,8 @@ fun PasswordTextViewForLogIn(loginViewModel: LoginViewModel){
                 width = 0.dp,
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
-            ),
+            )
+            .testTag("passwordTextView"),
         visualTransformation = PasswordVisualTransformation()
     )
 }

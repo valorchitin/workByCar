@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -145,13 +146,14 @@ fun TimeSelector(postTripsViewModel: PostTripsViewModel) {
             Button(
                 onClick = { showTimePicker = true },
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0277BD))
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0277BD)),
+                modifier = Modifier.testTag("openTimePicker")
             ) {
                 Text(
                     text = postTripsViewModel.departureHour.format(timeFormatter),
                     color = Color.White,
                     style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
             Spacer(modifier = Modifier.height(24.dp))

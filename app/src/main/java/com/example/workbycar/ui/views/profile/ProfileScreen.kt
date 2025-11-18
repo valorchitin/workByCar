@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -134,12 +135,18 @@ fun ProfileScreen(navController: NavController, profileViewModel: ProfileViewMod
 
 @Composable
 fun TextInfo(icon: ImageVector, typeInfo: String, info: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Icon(imageVector = icon, contentDescription = typeInfo, tint = MaterialTheme.colorScheme.primary)
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(text = typeInfo, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            Text(text = info, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = info,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.testTag(typeInfo.replace(" ", ""))
+            )
         }
     }
 }
