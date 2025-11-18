@@ -10,7 +10,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SignUpInstrumentedTest {
+class ASignUpInstrumentedTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

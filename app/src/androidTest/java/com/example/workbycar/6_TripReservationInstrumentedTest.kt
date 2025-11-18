@@ -19,7 +19,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 
 @RunWith(AndroidJUnit4::class)
-class TripReservationInstrumentedTest {
+class HTripReservationInstrumentedTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

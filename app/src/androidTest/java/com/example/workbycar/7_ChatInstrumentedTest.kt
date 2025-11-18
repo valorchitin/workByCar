@@ -21,7 +21,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 
 @RunWith(AndroidJUnit4::class)
-class ChatInstrumentedTest {
+class IChatInstrumentedTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()

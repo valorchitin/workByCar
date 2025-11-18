@@ -1,8 +1,5 @@
 package com.example.workbycar
 
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -22,7 +19,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 
 @RunWith(AndroidJUnit4::class)
-class SearcherInstrumentedTest {
+class ESearcherInstrumentedTest {
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
