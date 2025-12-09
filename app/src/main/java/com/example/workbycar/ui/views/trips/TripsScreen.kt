@@ -116,7 +116,7 @@ fun TripsScreen(
                 }
                 if (bookedTrips.isNotEmpty()){
                     items(bookedTrips) { trip ->
-                        TripCard(trip, navController, searcherViewModel)
+                        TripCard(trip, navController, searcherViewModel, false)
                     }
                 } else {
                     item {
@@ -145,7 +145,7 @@ fun TripsScreen(
                 }
                 if (trips.isNotEmpty()){
                     items(trips) { trip ->
-                        TripCard(trip, navController, searcherViewModel)
+                        TripCard(trip, navController, searcherViewModel, true)
                     }
                 } else {
                     item {
@@ -170,7 +170,7 @@ fun TripsScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TripCard(trip: Trip, navController: NavController, searcherViewModel: SearcherViewModel) {
+fun TripCard(trip: Trip, navController: NavController, searcherViewModel: SearcherViewModel, owner: Boolean) {
     val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val outputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
@@ -193,7 +193,7 @@ fun TripCard(trip: Trip, navController: NavController, searcherViewModel: Search
             searcherViewModel.selectedTrip = trip
             searcherViewModel.getDriver()
             searcherViewModel.getPassengers()
-            navController.navigate("${AppScreens.TripInformationScreen.route}/true")
+            navController.navigate("${AppScreens.TripInformationScreen.route}/${owner}")
         },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
