@@ -40,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -67,7 +68,10 @@ fun TripInformationScreen(navController: NavController, searcherViewModel: Searc
         TopAppBar(
             title = { Text(text = "") },
             navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.testTag("closeTripInformation")
+                ) {
                     Icon(imageVector = Icons.Filled.Close, contentDescription = "Arrow back")
                 }
             }
@@ -344,7 +348,7 @@ fun ThirdSection(searcherViewModel: SearcherViewModel, chatsViewModel: ChatsView
                     ),
                     border = BorderStroke(2.dp, Color(0xFF0D47A1)),
                     shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.wrapContentWidth()
+                    modifier = Modifier.wrapContentWidth().testTag("contactButton")
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -391,7 +395,8 @@ fun ReservationButton(searcherViewModel: SearcherViewModel, navController: NavCo
             enabled = searcherViewModel.selectedTrip!!.passengers.size != searcherViewModel.selectedTrip!!.passengersNumber,
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag("reservationButton"),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF0D47A1),
                 contentColor = Color.White
@@ -443,5 +448,3 @@ fun ReservationButton(searcherViewModel: SearcherViewModel, navController: NavCo
         }
     }
 }
-
-

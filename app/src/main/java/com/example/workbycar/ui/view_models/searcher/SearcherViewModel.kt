@@ -240,22 +240,38 @@ class SearcherViewModel @Inject constructor(
     }
 
     fun bookASeat() {
-        if (userId !== ""){
-            FirebaseFirestore.getInstance()
-                .collection("trips")
-                .document(selectedTrip!!.tripId)
-                .update("passengers",
-                    com.google.firebase.firestore.FieldValue.arrayUnion(userId)
+        if (userId.isNullOrBlank()) {
+
+            println("userId vacío, recuperando usuario...")
+
+            authRepository.getCurrentUser(
+                CallBackHandle(
+                    onSuccess = { user ->
+                        userId = user.uid
+                        bookASeat()
+                    },
+                    onError = {
+                        println("Error obteniendo currentUserId: $it")
+                    }
                 )
-                .addOnSuccessListener {
-                    println("Seat booked successfully!")
-                }
-                .addOnFailureListener { e ->
-                    println("Error booking seat: ${e.message}")
-                }
-        } else {
-            println("No user logged in")
+            )
+            return
         }
+
+        // Si ya tenemos userId válido → reservar asiento
+        FirebaseFirestore.getInstance()
+            .collection("trips")
+            .document(selectedTrip!!.tripId)
+            .update(
+                "passengers",
+                com.google.firebase.firestore.FieldValue.arrayUnion(userId)
+            )
+            .addOnSuccessListener {
+                println("Seat booked successfully!")
+            }
+            .addOnFailureListener { e ->
+                println("Error booking seat: ${e.message}")
+            }
     }
 
     fun getUserId(){

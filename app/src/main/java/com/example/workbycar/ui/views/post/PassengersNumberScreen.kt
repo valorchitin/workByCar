@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -133,7 +134,8 @@ fun PassengersSelector(postTripsViewModel: PostTripsViewModel) {
             onClick = {
                 postTripsViewModel.decreasePassengers()
             },
-            shape = CircleShape
+            shape = CircleShape,
+            modifier = Modifier.testTag("reducePassengers")
         ) {
             Text(
                 text = "-",
@@ -146,7 +148,7 @@ fun PassengersSelector(postTripsViewModel: PostTripsViewModel) {
             text = "${postTripsViewModel.passengersNumber}",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp).testTag("passengersNumber")
         )
 
         Button(

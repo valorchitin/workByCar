@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -130,6 +131,7 @@ fun EmailTextViewForSignUp(signUpViewModel: SignUpViewModel){
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
             )
+            .testTag("emailTextView")
     )
 }
 
@@ -147,6 +149,7 @@ fun NameTextView(signUpViewModel: SignUpViewModel){
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
             )
+            .testTag("nameTextView")
     )
 }
 
@@ -164,6 +167,7 @@ fun SurnameTextView(signUpViewModel: SignUpViewModel){
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
             )
+            .testTag("surnameTextView")
     )
 }
 
@@ -180,7 +184,8 @@ fun PasswordTextViewForSignUp(signUpViewModel: SignUpViewModel){
                 width = 0.dp,
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
-            ),
+            )
+            .testTag("passwordTextView"),
         visualTransformation = PasswordVisualTransformation()
     )
 }
@@ -272,6 +277,7 @@ fun DescriptionTextFile(signUpViewModel: SignUpViewModel){
                 color = Color.White,
                 shape = CutCornerShape(5.dp)
             )
+            .testTag("descriptionTextView")
     )
 }
 

@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,14 +85,16 @@ fun ReservationTypeScreen(navController: NavController, postTripsViewModel: Post
                 text = "Yes, of course!",
                 type = true,
                 postTripsViewModel = postTripsViewModel,
-                navController = navController
+                navController = navController,
+                "automatic"
             )
 
             ClickableText(
                 text = "No, I will manually respond to each request",
                 type = false,
                 postTripsViewModel = postTripsViewModel,
-                navController = navController
+                navController = navController,
+                "nonAutomatic"
             )
         }
     }
@@ -99,14 +102,15 @@ fun ReservationTypeScreen(navController: NavController, postTripsViewModel: Post
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ClickableText(text: String, type: Boolean, postTripsViewModel: PostTripsViewModel, navController: NavController) {
+fun ClickableText(text: String, type: Boolean, postTripsViewModel: PostTripsViewModel, navController: NavController, tag: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 postTripsViewModel.setReservationType(type)
                 navController.navigate(AppScreens.PriceRecommendationScreen.route)
-            },
+            }
+            .testTag(tag),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, Color(0xFF0277BD)),
         color = Color.White,

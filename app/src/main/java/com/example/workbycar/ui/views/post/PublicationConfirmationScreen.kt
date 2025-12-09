@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -87,14 +88,14 @@ fun PublicationConfirmationScreen(navController: NavController) {
                 textAlign = TextAlign.Center
             )
 
-            ClickableConfirmationOption("Yes, I would like to publish it", true, navController)
-            ClickableConfirmationOption("No, finish the process", false, navController)
+            ClickableConfirmationOption("Yes, I would like to publish it", true, navController, "postReturn")
+            ClickableConfirmationOption("No, finish the process", false, navController, "dontPostReturn")
         }
     }
 }
 
 @Composable
-fun ClickableConfirmationOption(text: String, type: Boolean, navController: NavController) {
+fun ClickableConfirmationOption(text: String, type: Boolean, navController: NavController, tag: String) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -104,7 +105,8 @@ fun ClickableConfirmationOption(text: String, type: Boolean, navController: NavC
                 } else {
                     navController.navigate(AppScreens.TripsScreen.route)
                 }
-            },
+            }
+            .testTag(tag),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.dp, Color.White),
         color = Color.White,

@@ -32,6 +32,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -59,9 +60,10 @@ fun FoundTripsScreen(navController: NavController, searcherViewModel: SearcherVi
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
+                    IconButton(
+                        onClick = { navController.popBackStack() },
+                        modifier = Modifier.testTag("closeFoundTrips")
+                    ) {
                         Icon(imageVector = Icons.Filled.Close, contentDescription = "Close")
                     }
                 },
@@ -90,6 +92,7 @@ fun FoundTripsScreen(navController: NavController, searcherViewModel: SearcherVi
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .testTag("tripsList")
             ) {
                 items(trips) { trip ->
                     TripCard(trip, navController, searcherViewModel)
@@ -120,6 +123,7 @@ fun TripCard(trip: Trip, navController: NavController, searcherViewModel: Search
             .fillMaxWidth()
             .wrapContentHeight()
             .padding(horizontal = 16.dp, vertical = 8.dp)
+            .testTag("trip_card")
             .clickable {
                 searcherViewModel.selectedTrip = trip
                 searcherViewModel.getDriver()

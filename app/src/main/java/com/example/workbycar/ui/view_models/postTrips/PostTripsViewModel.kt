@@ -241,42 +241,42 @@ class PostTripsViewModel @Inject constructor(
         }
 
         fun postTrip() {
-            viewModelScope.launch {
-                authRepository.getCurrentUser(CallBackHandle(
-                    onSuccess = {user ->
-                        val trip = Trip(
-                            uid = user.uid,
-                            origin = origin,
-                            destination = destination,
-                            origincoordinates = origincoordinates,
-                            destinationcoordinates = destinationcoordinates,
-                            route = selectedRoute,
-                            dates = dates.map { date -> date.toString() },
-                            startOfWeek = startOfWeek.toString(),
-                            endOfWeek = endOfWeek.toString(),
-                            departureHour = departureHour.toString(),
-                            passengersNumber = passengersNumber,
-                            automatedReservation = automatedReservation,
-                            price = price,
-                            description = description,
-                            passengers = emptyList(),
-                        )
+        viewModelScope.launch {
+            authRepository.getCurrentUser(CallBackHandle(
+                onSuccess = {user ->
+                    val trip = Trip(
+                        uid = user.uid,
+                        origin = origin,
+                        destination = destination,
+                        origincoordinates = origincoordinates,
+                        destinationcoordinates = destinationcoordinates,
+                        route = selectedRoute,
+                        dates = dates.map { date -> date.toString() },
+                        startOfWeek = startOfWeek.toString(),
+                        endOfWeek = endOfWeek.toString(),
+                        departureHour = departureHour.toString(),
+                        passengersNumber = passengersNumber,
+                        automatedReservation = automatedReservation,
+                        price = price,
+                        description = description,
+                        passengers = emptyList(),
+                    )
 
-                        FirebaseFirestore.getInstance().collection("trips").add(trip)
-                            .addOnSuccessListener {
-                                Log.d("Firestore", "Trip added successfully!")
-                                reset()
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e("Firestore", "Error adding trip", e)
-                            }
-                    },
-                    onError = {
-                        Log.e("SignUpViewModel", "Error al obtener el usario actual.")
-                    }
-                ))
-            }
+                    FirebaseFirestore.getInstance().collection("trips").add(trip)
+                        .addOnSuccessListener {
+                            Log.d("Firestore", "Trip added successfully!")
+                            reset()
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("Firestore", "Error adding trip", e)
+                        }
+                },
+                onError = {
+                    Log.e("SignUpViewModel", "Error al obtener el usario actual.")
+                }
+            ))
         }
+    }
 
         private fun reset() {
             origin = ""
