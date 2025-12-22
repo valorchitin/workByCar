@@ -18,6 +18,10 @@ class ASignUpInstrumentedTest {
     @Test
     fun signUpFeatureTest() {
         // We wait for the SplashScreen to finish
+        composeTestRule.waitUntil(timeoutMillis = 8_000) {
+            composeTestRule.onAllNodesWithText("Work By Car").fetchSemanticsNodes().isEmpty()
+        }
+
         composeTestRule.waitUntil(timeoutMillis = 6000) {
             composeTestRule
                 .onAllNodesWithText("Sign up")

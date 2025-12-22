@@ -173,6 +173,10 @@ class CProfileInstrumentedTest {
 
     @Test
     fun deleteAccountTest() {
+        composeTestRule.waitUntil(timeoutMillis = 8_000) {
+            composeTestRule.onAllNodesWithText("Work By Car").fetchSemanticsNodes().isEmpty()
+        }
+
         composeTestRule.waitUntil(timeoutMillis = 6000) {
             composeTestRule
                 .onAllNodesWithText("Sign In")

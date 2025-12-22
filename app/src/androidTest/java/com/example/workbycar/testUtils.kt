@@ -9,6 +9,9 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 
 fun AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>.loginAsTestUser(email: String, password: String, welcome: String) {
+    waitUntil(timeoutMillis = 8_000) {
+        onAllNodesWithText("Work By Car").fetchSemanticsNodes().isEmpty()
+    }
     // We wait for the SplashScreen to finish
     waitUntil(timeoutMillis = 6000) {
         onAllNodesWithText("Sign In").fetchSemanticsNodes().isNotEmpty()
