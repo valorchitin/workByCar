@@ -125,6 +125,8 @@ fun ChatScreen(navController: NavController, chatsViewModel: ChatsViewModel, sea
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .imePadding()
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
