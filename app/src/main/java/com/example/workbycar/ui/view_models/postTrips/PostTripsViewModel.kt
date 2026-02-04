@@ -185,10 +185,8 @@ class PostTripsViewModel @Inject constructor(
                 try {
                     val originStr = "${origin.latitude},${origin.longitude}"
                     val destinationStr = "${destination.latitude},${destination.longitude}"
-                    val apiKey = apiKeyProvider.getApiKey()
-
+                    val apiKey = apiKeyProvider.getApiKeyDirections()
                     val response = directionsAPIService.getDirections(originStr, destinationStr, true, apiKey)
-
                     _routes.postValue(response.routes)
                 } catch (e: Exception) {
                     Log.e("DirectionsAPI", "Error fetching routes: ${e.message}")

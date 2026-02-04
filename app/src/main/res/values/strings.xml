@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">WorkByCar</string>
     <string name="google_maps_api_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBeXxmiYd3yQngF_9-eB-OIxB2S-zw_kdI</string>
+    <string name="directions_api_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCTsKWrWb60NKcsWy8W-wIJ0zbs3tmwhIo</string>
 </resources>

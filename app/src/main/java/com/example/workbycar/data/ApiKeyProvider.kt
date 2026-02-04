@@ -14,4 +14,8 @@ class ApiKeyProvider @Inject constructor(
     fun getApiKey(): String {
         return context.getString(R.string.google_maps_api_key)
     }
+
+    fun getApiKeyDirections(): String {
+        return context.getString(R.string.directions_api_key)
+    }
 }
