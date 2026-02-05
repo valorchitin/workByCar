@@ -1,9 +1,18 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.hilt)
     id("kotlin-kapt")
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
 }
 
 android {
@@ -16,6 +25,17 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        resValue(
+            "string",
+            "google_maps_api_key",
+            localProperties.getProperty("GOOGLE_MAPS_API_KEY", "")
+        )
+        resValue(
+            "string",
+            "directions_api_key",
+            localProperties.getProperty("DIRECTIONS_API_KEY", "")
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -81,24 +101,23 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    //Librerias de firebase
+    // Librerías de firebase
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.firebase.analytics)
 
-    //Librerias hilt
+    // Librerías hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
-    //Librerias google apis
+    // Librerías google apis
     implementation(libs.play.services.places)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
     implementation(libs.maps.compose)
     implementation(libs.android.maps.utils)
 
-    //Retrofit
+    // Retrofit
     implementation(libs.retrofit2.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
-
 }
